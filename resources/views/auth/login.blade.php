@@ -47,21 +47,13 @@
         <!-- Floating shapes behind card -->
         <div class="absolute -top-10 -right-10 w-32 h-32 bg-cyan-400 rounded-full mix-blend-multiply filter blur-2xl opacity-60 animate-pulse"></div>
         <div class="absolute -bottom-10 -left-10 w-32 h-32 bg-blue-600 rounded-full mix-blend-multiply filter blur-2xl opacity-60 animate-pulse" style="animation-delay: 2s;"></div>
-        
-        <!-- Back Button -->
-        <div class="absolute -top-16 left-0">
-            <a href="{{ url('/') }}" class="flex items-center gap-2 text-white/80 hover:text-white transition-colors font-medium text-sm">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
-                Kembali ke Beranda
-            </a>
-        </div>
 
         <div class="glass-panel rounded-3xl p-8 relative overflow-hidden shadow-2xl shadow-blue-900/40">
             <div class="text-center mb-8">
                 <div class="inline-flex items-center justify-center w-14 h-14 bg-white/20 rounded-2xl mb-4 border border-white/30 backdrop-blur-sm shadow-inner">
                     <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8V7a4 4 0 00-8 0v4h8z"/></svg>
                 </div>
-                <h2 class="text-2xl font-bold text-white tracking-tight">Selamat Datang Kembali</h2>
+                <h2 class="text-2xl font-bold text-white tracking-tight">Selamat Datang</h2>
                 <p class="text-blue-200 text-sm mt-1">Masuk untuk mencatat presensi Anda hari ini</p>
             </div>
 
@@ -94,7 +86,7 @@
                 </div>
 
                 <button type="submit" class="w-full py-3.5 mt-4 bg-white text-blue-700 font-bold rounded-xl shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:shadow-[0_0_25px_rgba(255,255,255,0.5)] hover:bg-blue-50 transition-all hover:-translate-y-0.5 active:translate-y-0">
-                    Masuk ke Sistem
+                    Masuk
                 </button>
             </form>
             

@@ -5,7 +5,7 @@ use App\Http\Controllers\Intern\PermissionController;
 use App\Http\Controllers\Auth\AuthController;
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('login');
 });
 
 Route::middleware('guest')->group(function () {
