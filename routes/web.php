@@ -41,72 +41,15 @@ Route::middleware(['auth'])->prefix('intern')->name('intern.')->group(function (
     Route::get('/attendance', [AttendanceController::class, 'dashboard'])->name('attendance.index');
 });
 
+use App\Http\Controllers\Admin\AdminController;
+
 // ADMIN AUTH & ROUTES (Session-based from Sagos)
-Route::prefix('admin')->group(function () {
+Route::prefix('admin')->middleware(['auth'])->group(function () {
     
-    Route::get('/login', function () {
-        return view('admin.login');
-    })->name('admin.login');
-
-    Route::post('/login', function (Request $request) {
-        $username = $request->input('email');
-        $password = $request->input('password');
-
-        $storedUsername = session('admin_username', 'admin');
-        $storedPassword = session('admin_password', 'admin');
-        $adminActive = session('admin_active', true);
-
-        if (!$adminActive) {
-            return back()->withErrors(['error' => 'Akun admin dinonaktifkan. Hubungi administrator untuk mengaktifkan kembali.']);
-        }
-
-        if ($username === $storedUsername && $password === $storedPassword) {
-            session(['admin_logged_in' => true]);
-            return redirect('/admin/dashboard');
-        }
-
-        return back()->withErrors(['error' => 'Username atau password salah!']);
-    });
-
-    Route::get('/logout', function (Request $request) {
-        $request->session()->forget('admin_logged_in');
-        return redirect('/admin/login');
-    });
-
-    Route::get('/settings', function () {
-        if (!session('admin_logged_in')) {
-            return redirect('/admin/login');
-        }
-
-        $currentUsername = session('admin_username', 'admin');
-        $adminActive = session('admin_active', true);
-        return view('admin.settings', compact('currentUsername', 'adminActive'));
-    });
-
-    Route::post('/settings', function (Request $request) {
-        if (!session('admin_logged_in')) {
-            return redirect('/admin/login');
-        }
-
-        $request->validate([
-            'username' => 'required|string|max:255',
-            'password' => 'nullable|string|min:3',
-            'active' => 'nullable|boolean',
-        ]);
-
-        session(['admin_username' => $request->input('username')]);
-        if ($request->filled('password')) {
-            session(['admin_password' => $request->input('password')]);
-        }
-        session(['admin_active' => $request->boolean('active')]);
-
-        return back()->with('success', 'Pengaturan akun berhasil diperbarui.');
-    });
-
-    Route::get('/dashboard', function () {
-        if (!session('admin_logged_in')) {
-            return redirect('/admin/login');
-        }
-        return view('admin.dashboard');
+    Route::middleware(\App\Http\Middleware\CheckAdminRole::class)->group(function () {
+        Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+        Route::post('/user/store', [AdminController::class, 'storeUser'])->name('admin.user.store');
+        Route::post('/permission/{id}', [AdminController::class, 'updatePermission'])->name('admin.permission.update');
+        Route::get('/user/{id}/calendar', [AdminController::class, 'getUserCalendar'])->name('admin.user.calendar');
     });
 });

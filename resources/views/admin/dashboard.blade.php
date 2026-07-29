@@ -96,9 +96,12 @@
                         Akun
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="adminAccountMenu">
-                        <li><a class="dropdown-item" href="/admin/settings">Pengaturan</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item text-danger" href="/logout">Logout</a></li>
+                        <li>
+                            <form method="POST" action="{{ route('logout') }}" class="m-0">
+                                @csrf
+                                <button type="submit" class="dropdown-item text-danger">Logout</button>
+                            </form>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -134,20 +137,15 @@
                             </div>
                             <div class="card-body p-0">
                                 <div class="list-group list-group-flush" id="listUser">
-                                    <button type="button" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" data-bs-toggle="modal" data-bs-target="#modalKalenderUser" onclick="pilihUser(this, 'Ahmad Zulfikar', 'Universitas Mataram', '01 Feb 2026', '3 Bulan')">
+                                    @foreach($users as $user)
+                                    <button type="button" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" data-bs-toggle="modal" data-bs-target="#modalKalenderUser" onclick="pilihUser(this, '{{ $user->id }}', '{{ $user->name }}', '{{ $user->institution }}', '{{ \Carbon\Carbon::parse($user->start_date)->format('d M Y') }}', '{{ $user->duration }}')">
                                         <div>
-                                            <div class="fw-semibold">Ahmad Zulfikar</div>
-                                            <small class="text-muted">Universitas Mataram · Masuk 01 Feb 2026</small>
+                                            <div class="fw-semibold">{{ $user->name }}</div>
+                                            <small class="text-muted">{{ $user->institution }} · Masuk {{ \Carbon\Carbon::parse($user->start_date)->format('d M Y') }}</small>
                                         </div>
                                         <span class="badge bg-primary rounded-pill">Lihat</span>
                                     </button>
-                                    <button type="button" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" data-bs-toggle="modal" data-bs-target="#modalKalenderUser" onclick="pilihUser(this, 'Siti Rahma', 'SMK Negeri 1 Mataram', '15 Mar 2026', '2 Bulan')">
-                                        <div>
-                                            <div class="fw-semibold">Siti Rahma</div>
-                                            <small class="text-muted">SMK Negeri 1 Mataram · Masuk 15 Mar 2026</small>
-                                        </div>
-                                        <span class="badge bg-primary rounded-pill">Lihat</span>
-                                    </button>
+                                    @endforeach
                                 </div>
                             </div>
                         </div>
@@ -162,32 +160,31 @@
                             </div>
                             <div class="card-body">
                                 <div class="list-group">
+                                    @forelse($permissions as $perm)
                                     <div class="list-group-item d-flex flex-column gap-3">
                                         <div class="d-flex justify-content-between align-items-start">
                                             <div>
-                                                <div class="fw-semibold">Ahmad Zulfikar</div>
-                                                <small class="text-muted">4 Agustus 2026 · Menghadiri acara keluarga mendadak.</small>
+                                                <div class="fw-semibold">{{ $perm->user->name ?? 'Unknown' }}</div>
+                                                <small class="text-muted">{{ \Carbon\Carbon::parse($perm->date)->format('d F Y') }} · {{ $perm->reason }}</small>
                                             </div>
                                             <span class="badge status-proses text-dark">Dalam Proses</span>
                                         </div>
                                         <div class="d-flex gap-2">
-                                            <button class="btn btn-sm btn-outline-success" onclick="ubahStatusIzin(this, 'Setuju')">Terima</button>
-                                            <button class="btn btn-sm btn-outline-danger" onclick="ubahStatusIzin(this, 'Tolak')">Tolak</button>
+                                            <form method="POST" action="{{ route('admin.permission.update', $perm->id) }}">
+                                                @csrf
+                                                <input type="hidden" name="status" value="Approved">
+                                                <button type="submit" class="btn btn-sm btn-outline-success">Terima</button>
+                                            </form>
+                                            <form method="POST" action="{{ route('admin.permission.update', $perm->id) }}">
+                                                @csrf
+                                                <input type="hidden" name="status" value="Rejected">
+                                                <button type="submit" class="btn btn-sm btn-outline-danger">Tolak</button>
+                                            </form>
                                         </div>
                                     </div>
-                                    <div class="list-group-item d-flex flex-column gap-3">
-                                        <div class="d-flex justify-content-between align-items-start">
-                                            <div>
-                                                <div class="fw-semibold">Siti Rahma</div>
-                                                <small class="text-muted">10 Agustus 2026 · Sakit demam (melampirkan surat dokter).</small>
-                                            </div>
-                                            <span class="badge status-proses text-dark">Dalam Proses</span>
-                                        </div>
-                                        <div class="d-flex gap-2">
-                                            <button class="btn btn-sm btn-outline-success" onclick="ubahStatusIzin(this, 'Setuju')">Terima</button>
-                                            <button class="btn btn-sm btn-outline-danger" onclick="ubahStatusIzin(this, 'Tolak')">Tolak</button>
-                                        </div>
-                                    </div>
+                                    @empty
+                                    <div class="text-center text-muted p-3">Tidak ada permintaan izin.</div>
+                                    @endforelse
                                 </div>
                             </div>
                         </div>
@@ -224,37 +221,7 @@
                         <div>Min</div><div>Sen</div><div>Sel</div><div>Rabu</div><div>Kam</div><div>Jum</div><div>Sab</div>
                     </div>
                     <div class="calendar-grid" id="gridKalenderBulan">
-                        <div class="calendar-day status-hadir">1</div>
-                        <div class="calendar-day bg-white text-muted">2</div>
-                        <div class="calendar-day status-hadir">3</div>
-                        <div class="calendar-day status-disetujui">4</div>
-                        <div class="calendar-day status-proses">5</div>
-                        <div class="calendar-day status-ditolak">6</div>
-                        <div class="calendar-day status-hadir">7</div>
-                        <div class="calendar-day status-hadir">8</div>
-                        <div class="calendar-day bg-white text-muted">9</div>
-                        <div class="calendar-day status-hadir">10</div>
-                        <div class="calendar-day status-hadir">11</div>
-                        <div class="calendar-day status-hadir">12</div>
-                        <div class="calendar-day status-hadir">13</div>
-                        <div class="calendar-day status-hadir">14</div>
-                        <div class="calendar-day status-hadir">15</div>
-                        <div class="calendar-day bg-white text-muted">16</div>
-                        <div class="calendar-day status-hadir">17</div>
-                        <div class="calendar-day status-hadir">18</div>
-                        <div class="calendar-day status-hadir">19</div>
-                        <div class="calendar-day status-hadir">20</div>
-                        <div class="calendar-day status-hadir">21</div>
-                        <div class="calendar-day status-hadir">22</div>
-                        <div class="calendar-day bg-white text-muted">23</div>
-                        <div class="calendar-day status-hadir">24</div>
-                        <div class="calendar-day status-hadir">25</div>
-                        <div class="calendar-day status-hadir">26</div>
-                        <div class="calendar-day status-hadir">27</div>
-                        <div class="calendar-day status-hadir">28</div>
-                        <div class="calendar-day status-hadir">29</div>
-                        <div class="calendar-day bg-white text-muted">30</div>
-                        <div class="calendar-day status-hadir">31</div>
+                        <!-- Dimuat via AJAX -->
                     </div>
                 </div>
             </div>
@@ -270,22 +237,31 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="formTambahUser">
+                    <form id="formTambahUser" method="POST" action="{{ route('admin.user.store') }}">
+                        @csrf
                         <div class="mb-3">
                             <label class="form-label">Nama Lengkap</label>
-                            <input type="text" class="form-control" required placeholder="Contoh: Budi Santoso">
+                            <input type="text" class="form-control" name="name" required placeholder="Contoh: Budi Santoso">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" name="email" required placeholder="Contoh: budi@magang.com">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Password</label>
+                            <input type="password" class="form-control" name="password" required>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Asal Instansi</label>
-                            <input type="text" class="form-control" required placeholder="Contoh: Universitas X">
+                            <input type="text" class="form-control" name="institution" required placeholder="Contoh: Universitas X">
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Tanggal Masuk</label>
-                            <input type="date" class="form-control" required>
+                            <input type="date" class="form-control" name="start_date" required>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Durasi Kerja / Magang</label>
-                            <input type="text" class="form-control" required placeholder="Contoh: 3 Bulan">
+                            <input type="text" class="form-control" name="duration" required placeholder="Contoh: 3 Bulan">
                         </div>
                         <button type="submit" class="btn btn-primary w-100">Simpan User</button>
                     </form>
@@ -299,12 +275,60 @@
     <script>
         let selectedUserElement = null;
 
-        // Fungsi simulasi klik user untuk memuat kalender spesifik
-        function pilihUser(element, nama, instansi, tglMasuk, durasi) {
+        function pilihUser(element, userId, nama, instansi, tglMasuk, durasi) {
             selectedUserElement = element;
             document.getElementById('judulKalender').innerText = "Kalender Absensi: " + nama;
             document.getElementById('infoDetailUser').innerText = `Asal Instansi: ${instansi} | Durasi: ${durasi} (Masuk: ${tglMasuk})`;
             document.getElementById('hapusUserButton').disabled = false;
+            
+            // Fetch calendar data via AJAX
+            document.getElementById('gridKalenderBulan').innerHTML = '<div class="text-center py-4 col-span-7 w-100">Memuat data...</div>';
+            
+            fetch(`/admin/user/${userId}/calendar`)
+                .then(response => response.json())
+                .then(data => {
+                    renderCalendar(data.attendances, data.permissions);
+                })
+                .catch(error => {
+                    document.getElementById('gridKalenderBulan').innerHTML = '<div class="text-center py-4 text-danger w-100">Gagal memuat kalender</div>';
+                });
+        }
+
+        function renderCalendar(attendances, permissions) {
+            const grid = document.getElementById('gridKalenderBulan');
+            grid.innerHTML = '';
+            
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = today.getMonth();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const firstDayIndex = new Date(year, month, 1).getDay(); // 0 (Sun) to 6 (Sat)
+            
+            // Adjust day to match Mon-Sun (Min-Sab in UI? Wait UI says Min Sen Sel Rabu Kam Jum Sab which is Sun-Sat)
+            
+            // Add blanks for first row
+            for(let i = 0; i < firstDayIndex; i++) {
+                grid.innerHTML += `<div class="calendar-day bg-light border-0"></div>`;
+            }
+            
+            for(let day = 1; day <= daysInMonth; day++) {
+                const dateStr = `${year}-${String(month+1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                
+                let att = attendances.find(a => a.date === dateStr);
+                let perm = permissions.find(p => p.date === dateStr);
+                
+                let cssClass = "bg-white text-muted";
+                
+                if (perm) {
+                    if (perm.status === 'Approved') cssClass = "status-disetujui";
+                    else if (perm.status === 'Rejected') cssClass = "status-ditolak";
+                    else cssClass = "status-proses";
+                } else if (att) {
+                    cssClass = "status-hadir";
+                }
+                
+                grid.innerHTML += `<div class="calendar-day ${cssClass}">${day}</div>`;
+            }
         }
 
         function nonaktifkanUser() {
