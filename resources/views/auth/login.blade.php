@@ -61,8 +61,8 @@
                 @csrf
 
                 <div>
-                    <label for="email" class="block text-xs font-semibold text-blue-100 uppercase tracking-wide mb-1.5 ml-1">Email</label>
-                    <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus autocomplete="username"
+                    <label for="email" class="block text-xs font-semibold text-blue-100 uppercase tracking-wide mb-1.5 ml-1">Email atau Username</label>
+                    <input id="email" type="text" name="email" value="{{ old('email') }}" required autofocus autocomplete="username" placeholder="contoh: admin@admin.com atau admin"
                         class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-blue-200/50 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent transition-all backdrop-blur-sm">
                     @error('email')
                         <p class="text-red-300 text-xs mt-1.5 font-medium ml-1 flex items-center gap-1">

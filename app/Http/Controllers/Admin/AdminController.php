@@ -23,7 +23,6 @@ class AdminController extends Controller
 
     public function storeUser(Request $request)
     {
-
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users',
@@ -33,16 +32,21 @@ class AdminController extends Controller
             'duration' => 'required|string|max:255',
         ]);
 
-        User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'institution' => $request->institution,
-            'start_date' => $request->start_date,
-            'duration' => $request->duration,
-        ]);
+        try {
+            User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'institution' => $request->institution,
+                'start_date' => $request->start_date,
+                'duration' => $request->duration,
+                'role' => 'intern', // Set role sebagai intern secara default
+            ]);
 
-        return redirect()->back()->with('success', 'User berhasil ditambahkan.');
+            return redirect()->back()->with('success', 'User berhasil ditambahkan. User dapat login dengan email dan password yang telah ditetapkan.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Gagal menambahkan user: ' . $e->getMessage())->withInput();
+        }
     }
 
     public function updatePermission(Request $request, $id)
