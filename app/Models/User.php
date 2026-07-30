@@ -26,7 +26,6 @@ class User extends Authenticatable
         'phone_number',
         'start_date',
         'end_date',
-        'duration',
         'password',
         'role',
     ];

@@ -25,41 +25,51 @@
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
                 </svg>
-                <span>Bapenda NTB — Peserta Magang</span>
+                <span>Bapenda NTB — {{ auth()->user()->role === 'admin' ? 'Administrator' : 'Peserta Magang' }}</span>
             </div>
         </div>
     </div>
 
+    @if(auth()->user()->role !== 'admin')
     <!-- Card Informasi Detail Biodata -->
     <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 space-y-3">
-        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Informasi Akademik & Diri</h3>
+        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Informasi Magang</h3>
 
         <div class="space-y-2.5 text-xs">
-            <!-- NIM / NISN -->
-            <div class="flex items-center justify-between py-1.5 border-b border-slate-100">
-                <span class="text-slate-500">NIM / NISN</span>
-                <span class="font-bold text-slate-800">{{ auth()->user()->nim_nisn ?? '-' }}</span>
-            </div>
-
             <!-- Asal Instansi / Universitas -->
             <div class="flex items-center justify-between py-1.5 border-b border-slate-100">
-                <span class="text-slate-500">Asal Sekolah/Kampus</span>
+                <span class="text-slate-500">Asal Kampus / Instansi</span>
                 <span class="font-bold text-slate-800">{{ auth()->user()->institution ?? '-' }}</span>
             </div>
 
-            <!-- Program Studi / Jurusan -->
+            <!-- Jurusan / Program Studi -->
             <div class="flex items-center justify-between py-1.5 border-b border-slate-100">
-                <span class="text-slate-500">Jurusan / Prodi</span>
-                <span class="font-bold text-slate-800">{{ auth()->user()->department ?? 'Teknik Informatika' }}</span>
+                <span class="text-slate-500">Jurusan / Program Studi</span>
+                <span class="font-bold text-slate-800">{{ auth()->user()->major ?? '-' }}</span>
+            </div>
+
+            <!-- Durasi Magang -->
+            <div class="flex items-center justify-between py-1.5 border-b border-slate-100">
+                <span class="text-slate-500">Periode Magang</span>
+                <span class="font-bold text-slate-800 text-right">
+                    {{ auth()->user()->start_date ? \Carbon\Carbon::parse(auth()->user()->start_date)->translatedFormat('d F Y') : '-' }} <br class="sm:hidden" /> s.d <br class="sm:hidden" />
+                    {{ auth()->user()->end_date ? \Carbon\Carbon::parse(auth()->user()->end_date)->translatedFormat('d F Y') : '-' }}
+                </span>
             </div>
 
             <!-- Tanggal Mulai Magang -->
             <div class="flex items-center justify-between py-1.5">
                 <span class="text-slate-500">Status Akun</span>
-                <span class="px-2 py-0.5 text-[10px] bg-emerald-100 text-emerald-700 font-bold rounded-md">Aktif</span>
+                @php
+                    $isExpired = auth()->user()->end_date && \Carbon\Carbon::parse(auth()->user()->end_date)->endOfDay()->isPast();
+                @endphp
+                <span class="px-2 py-0.5 text-[10px] {{ $isExpired ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-700' }} font-bold rounded-md">
+                    {{ $isExpired ? 'Selesai (Tidak Aktif)' : 'Aktif' }}
+                </span>
             </div>
         </div>
     </div>
+    @endif
 
     <!-- Form Ubah Password -->
     <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 space-y-3">
@@ -74,7 +84,7 @@
 
         <form action="{{ route('intern.profile.update_password') }}" method="POST" class="space-y-3 pt-1">
             @csrf
-            @method('PUT')
+            @method('POST')
 
             <!-- Password Saat Ini -->
             <div>
@@ -122,7 +132,7 @@
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
                 </svg>
-                <span>Keluar dari Akun (Logout)</span>
+                <span>Keluar</span>
             </button>
         </form>
     </div>

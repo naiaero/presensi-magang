@@ -35,7 +35,12 @@ class AttendanceController extends Controller
             ->take(5)
             ->get();
 
-        return view('intern.dashboard', compact('todayAttendance', 'recentAttendances'));
+        // Ambil data pengajuan izin hari ini (jika ada)
+        $todayPermission = \App\Models\Permission::where('user_id', $userId)
+            ->where('date', $today)
+            ->first();
+
+        return view('intern.dashboard', compact('todayAttendance', 'recentAttendances', 'todayPermission'));
     }
 
     /**
@@ -75,6 +80,36 @@ class AttendanceController extends Controller
     }
 
     /**
+     * Halaman Riwayat Presensi (History)
+     */
+    public function history(Request $request)
+    {
+        $user = Auth::user();
+        
+        $month = $request->query('month', Carbon::now()->format('m'));
+        $year = $request->query('year', Carbon::now()->format('Y'));
+        
+        $startDate = Carbon::parse($user->created_at ?? $user->start_date)->startOfMonth();
+        $currentRequestedDate = Carbon::createFromDate($year, $month, 1)->startOfMonth();
+
+        if ($currentRequestedDate->lt($startDate)) {
+            $currentRequestedDate = $startDate;
+            $month = $startDate->format('m');
+            $year = $startDate->format('Y');
+        }
+        
+        $currentMonth = $year . '-' . str_pad($month, 2, '0', STR_PAD_LEFT);
+        
+        // Fetch attendances for current month
+        $attendances = Attendance::where('user_id', $user->id)
+            ->where('date', 'like', $currentMonth . '%')
+            ->orderBy('date', 'desc')
+            ->get();
+            
+        return view('intern.attendance.history', compact('attendances', 'month', 'year', 'startDate'));
+    }
+
+    /**
      * Halaman Scan / Pengambilan Geolocation untuk Presensi
      */
     public function scanView()
@@ -82,7 +117,7 @@ class AttendanceController extends Controller
         $user = Auth::user();
         $today = Carbon::today()->toDateString();
 
-        if ($user->end_date && $today > $user->end_date) {
+        if ($user->end_date && Carbon::parse($today)->greaterThan(Carbon::parse($user->end_date))) {
             return redirect()->route('intern.dashboard')
                 ->with('error', 'Masa magang Anda telah selesai pada tanggal ' . Carbon::parse($user->end_date)->translatedFormat('d F Y') . '. Anda tidak dapat lagi melakukan presensi.');
         }
@@ -110,7 +145,7 @@ class AttendanceController extends Controller
         $now = Carbon::now('Asia/Makassar'); // WITA (UTC+8)
         $today = $now->toDateString();
 
-        if ($user->end_date && $today > $user->end_date) {
+        if ($user->end_date && Carbon::parse($today)->greaterThan(Carbon::parse($user->end_date))) {
             return redirect()->route('intern.dashboard')
                 ->with('error', 'Masa magang Anda telah selesai pada tanggal ' . Carbon::parse($user->end_date)->translatedFormat('d F Y') . '. Anda tidak dapat lagi melakukan presensi.');
         }
@@ -122,14 +157,22 @@ class AttendanceController extends Controller
 
         $currentTime = $now->toTimeString();
 
-        // 1. Cek apakah sudah pernah presensi masuk hari ini
+        // 1. Cek apakah sudah pernah presensi atau sudah ada record kehadiran hari ini
         $existingAttendance = Attendance::where('user_id', $user->id)
             ->where('date', $today)
             ->first();
 
-        if ($existingAttendance && $existingAttendance->time_in) {
-            return redirect()->route('intern.dashboard')
-                ->with('error', 'Anda sudah melakukan presensi masuk hari ini.');
+        if ($existingAttendance) {
+            if ($existingAttendance->time_in) {
+                return redirect()->route('intern.dashboard')
+                    ->with('error', 'Anda sudah melakukan presensi masuk hari ini.');
+            } elseif ($existingAttendance->status === 'Hadir') {
+                return redirect()->route('intern.dashboard')
+                    ->with('error', 'Kehadiran Anda hari ini sudah dicatat melalui persetujuan izin Admin. Silakan langsung melakukan presensi pulang saat waktunya.');
+            } else {
+                return redirect()->route('intern.dashboard')
+                    ->with('error', 'Presensi tidak dapat dilakukan karena status Anda hari ini tercatat sebagai: ' . $existingAttendance->status);
+            }
         }
 
         // 2. Cek Batas Waktu Masuk (Maksimal 07:30 WITA)
@@ -193,7 +236,7 @@ class AttendanceController extends Controller
         $now = Carbon::now('Asia/Makassar');
         $today = $now->toDateString();
 
-        if ($user->end_date && $today > $user->end_date) {
+        if ($user->end_date && Carbon::parse($today)->greaterThan(Carbon::parse($user->end_date))) {
             return redirect()->route('intern.dashboard')
                 ->with('error', 'Masa magang Anda telah selesai pada tanggal ' . Carbon::parse($user->end_date)->translatedFormat('d F Y') . '. Anda tidak dapat lagi melakukan presensi.');
         }
@@ -205,7 +248,7 @@ class AttendanceController extends Controller
             ->where('date', $today)
             ->first();
 
-        if (!$attendance || !$attendance->time_in) {
+        if (!$attendance || (!$attendance->time_in && $attendance->status !== 'Hadir')) {
             return redirect()->route('intern.dashboard')
                 ->with('error', 'Anda belum melakukan presensi masuk hari ini.');
         }

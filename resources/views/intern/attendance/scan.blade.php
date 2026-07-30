@@ -93,6 +93,7 @@
             </button>
 
             @if(isset($isEarlyCheckout) && $isEarlyCheckout)
+                @push('modals')
                 <!-- Modal Alasan Pulang Cepat -->
                 <div id="early-leave-modal" class="fixed inset-0 z-50 hidden bg-slate-900/50 backdrop-blur-sm items-center justify-center p-4">
                     <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm overflow-hidden transform transition-all">
@@ -109,7 +110,7 @@
                         </div>
                         <div class="p-4 space-y-3">
                             <label for="early_leave_reason" class="block text-xs font-semibold text-slate-700">Alasan Pulang <span class="text-rose-500">*</span></label>
-                            <textarea name="early_leave_reason" id="early_leave_reason" rows="3" 
+                            <textarea name="early_leave_reason" id="early_leave_reason" rows="3" form="attendance-form"
                                 class="w-full text-sm border-slate-200 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 rounded-xl shadow-sm placeholder-slate-400 p-3" 
                                 placeholder="Jelaskan alasan Anda pulang lebih awal..." {{ (isset($isEarlyCheckout) && $isEarlyCheckout) ? 'required' : '' }}></textarea>
                             
@@ -121,7 +122,7 @@
                             <button type="button" onclick="hideEarlyLeaveModal()" class="px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-200 bg-slate-100 rounded-xl transition-all">
                                 Batal
                             </button>
-                            <button type="submit" class="px-4 py-2 text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl shadow-md transition-all">
+                            <button type="submit" form="attendance-form" class="px-4 py-2 text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl shadow-md transition-all">
                                 Konfirmasi & Pulang
                             </button>
                         </div>
@@ -140,6 +141,7 @@
                         modal.classList.remove('flex');
                     }
                 </script>
+                @endpush
             @endif
         @else
             <!-- Sudah Presensi Masuk & Pulang -->

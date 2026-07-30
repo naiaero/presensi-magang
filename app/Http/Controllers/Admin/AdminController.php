@@ -36,14 +36,8 @@ class AdminController extends Controller
             'end_date.after_or_equal' => 'Tanggal selesai magang harus setelah atau sama dengan tanggal mulai.',
         ]);
 
-        try {
-            $durationStr = $request->duration;
-            if (!$durationStr) {
-                $startFmt = Carbon::parse($request->start_date)->translatedFormat('d M Y');
-                $endFmt = Carbon::parse($request->end_date)->translatedFormat('d M Y');
-                $durationStr = "{$startFmt} s.d {$endFmt}";
-            }
 
+        try {
             User::create([
                 'name' => $request->name,
                 'email' => $request->email,
@@ -52,11 +46,10 @@ class AdminController extends Controller
                 'major' => $request->major,
                 'start_date' => $request->start_date,
                 'end_date' => $request->end_date,
-                'duration' => $durationStr,
                 'role' => 'intern',
             ]);
 
-            return redirect()->back()->with('success', 'User berhasil ditambahkan. User dapat login dengan email dan password yang telah ditetapkan.');
+            return redirect()->back()->with('success', 'User berhasil ditambahkan.');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Gagal menambahkan user: ' . $e->getMessage())->withInput();
         }
@@ -64,8 +57,6 @@ class AdminController extends Controller
 
     public function updateUser(Request $request, $id)
     {
-        $user = User::findOrFail($id);
-
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $id,
@@ -73,54 +64,29 @@ class AdminController extends Controller
             'major' => 'required|string|max:255',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
-            'duration' => 'nullable|string|max:255',
-        ], [
-            'end_date.after_or_equal' => 'Tanggal selesai magang harus setelah atau sama dengan tanggal mulai.',
         ]);
 
-        try {
-            $durationStr = $request->duration;
-            if (!$durationStr) {
-                $startFmt = Carbon::parse($request->start_date)->translatedFormat('d M Y');
-                $endFmt = Carbon::parse($request->end_date)->translatedFormat('d M Y');
-                $durationStr = "{$startFmt} s.d {$endFmt}";
-            }
+        $user = User::findOrFail($id);
+        $user->update([
+            'name' => $request->name,
+            'email' => $request->email,
+            'institution' => $request->institution,
+            'major' => $request->major,
+            'start_date' => $request->start_date,
+            'end_date' => $request->end_date,
+        ]);
 
-            $user->update([
-                'name' => $request->name,
-                'email' => $request->email,
-                'institution' => $request->institution,
-                'major' => $request->major,
-                'start_date' => $request->start_date,
-                'end_date' => $request->end_date,
-                'duration' => $durationStr,
-            ]);
-
-            return redirect()->back()->with('success', 'Data user ' . $user->name . ' berhasil diperbarui.');
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Gagal memperbarui user: ' . $e->getMessage());
-        }
+        return redirect()->back()->with('success', 'Data user berhasil diperbarui.');
     }
 
-    public function resetPassword(Request $request, $id)
+    public function resetUserPassword($id)
     {
         $user = User::findOrFail($id);
-
-        $request->validate([
-            'password' => 'required|string|min:6',
-        ], [
-            'password.min' => 'Password minimal harus 6 karakter.',
+        $user->update([
+            'password' => Hash::make('password'),
         ]);
 
-        try {
-            $user->update([
-                'password' => Hash::make($request->password),
-            ]);
-
-            return redirect()->back()->with('success', 'Password untuk ' . $user->name . ' berhasil di-reset.');
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Gagal mereset password: ' . $e->getMessage());
-        }
+        return redirect()->back()->with('success', 'Password berhasil direset menjadi "password".');
     }
 
     public function deleteUser($id)
@@ -151,15 +117,19 @@ class AdminController extends Controller
         $permission->save();
 
         if ($permission->status === 'Approved' && $permission->reason_option === 'Terlambat / Di luar Radius Kantor') {
-            Attendance::updateOrCreate(
-                [
-                    'user_id' => $permission->user_id,
-                    'date'    => $permission->date,
-                ],
-                [
-                    'status'  => 'Hadir',
-                ]
-            );
+            $attendance = Attendance::firstOrNew([
+                'user_id' => $permission->user_id,
+                'date'    => $permission->date,
+            ]);
+            
+            $attendance->status = 'Hadir';
+            
+            // Sinkronkan jam masuk dengan waktu pengajuan izin jika belum ada
+            if (!$attendance->time_in) {
+                $attendance->time_in = $permission->created_at->timezone('Asia/Makassar')->toTimeString();
+            }
+            
+            $attendance->save();
         }
 
         return redirect()->back()->with('success', 'Status izin diperbarui.');

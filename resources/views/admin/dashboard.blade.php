@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'Dashboard Admin')
+@section('title', 'Beranda')
 
 @section('content')
 <div class="mb-8 p-6 bg-gradient-to-br from-blue-700 to-indigo-800 rounded-3xl shadow-xl shadow-blue-900/20 text-white relative overflow-hidden">
@@ -19,7 +19,7 @@
         <button onclick="switchTab('users')" class="tab-btn active-tab bg-white text-blue-700 shadow-sm rounded-xl py-2.5 px-6 font-bold text-sm transition-all duration-300 w-1/2 md:w-auto" id="tab-users">
             <div class="flex items-center justify-center gap-2">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                Daftar User
+                Daftar Pengguna
             </div>
         </button>
         <button onclick="switchTab('permissions')" class="tab-btn inactive-tab text-slate-500 hover:text-slate-800 hover:bg-slate-200/50 rounded-xl py-2.5 px-6 font-semibold text-sm transition-all duration-300 w-1/2 md:w-auto" id="tab-permissions">
@@ -37,31 +37,43 @@
         <div class="p-6 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
                 <h2 class="text-lg font-bold text-slate-800">Daftar User</h2>
-                <p class="text-sm text-slate-500">Kelola data user dan lihat kalender absensi mereka.</p>
+                <p class="text-sm text-slate-500">Kelola data pengguna dan lihat kalender presensi.</p>
             </div>
             <button onclick="openModal('modalTambahUser')" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-sm font-semibold shadow-md shadow-blue-500/20 transition-all transform hover:-translate-y-0.5">
-                + Tambah User
+                + Tambah Pengguna
             </button>
         </div>
         <div class="divide-y divide-slate-100">
             @forelse($users as $user)
-            <div class="p-4 hover:bg-slate-50 transition-colors cursor-pointer group flex items-center justify-between" onclick="openCalendarModal('{{ $user->id }}', '{{ addslashes($user->name) }}', '{{ addslashes($user->institution) }}', '{{ \Carbon\Carbon::parse($user->start_date)->format('d M Y') }}', '{{ addslashes($user->duration) }}', '{{ addslashes($user->major) }}')">
-                <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold">
+            <div class="p-4 hover:bg-slate-50 transition-colors group flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-50 last:border-0">
+                <div class="flex items-center gap-4 cursor-pointer flex-1" onclick="openCalendarModal('{{ $user->id }}', '{{ addslashes($user->name) }}', '{{ addslashes($user->institution) }}', '{{ \Carbon\Carbon::parse($user->start_date)->format('d M Y') }}', '{{ \Carbon\Carbon::parse($user->end_date)->format('d M Y') }}', '{{ addslashes($user->major) }}')">
+                    <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold shrink-0">
                         {{ strtoupper(substr($user->name, 0, 1)) }}
                     </div>
                     <div>
-                        <h3 class="font-semibold text-slate-800 group-hover:text-blue-600 transition-colors">{{ $user->name }}</h3>
-                        <p class="text-xs text-slate-500">{{ $user->institution }} {{ $user->major ? ' - ' . $user->major : '' }} &middot; {{ \Carbon\Carbon::parse($user->start_date)->format('d M Y') }}</p>
+                        <h3 class="font-semibold text-slate-800 group-hover:text-blue-600 transition-colors flex items-center gap-2">
+                            {{ $user->name }}
+                            @if($user->end_date && \Carbon\Carbon::today()->toDateString() > $user->end_date)
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-rose-100 text-rose-700">Nonaktif</span>
+                            @else
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-emerald-100 text-emerald-700">Aktif</span>
+                            @endif
+                        </h3>
+                        <p class="text-xs text-slate-500">{{ $user->institution }} {{ $user->major ? ' - ' . $user->major : '' }} &middot; {{ \Carbon\Carbon::parse($user->start_date)->format('d M Y') }} s.d {{ \Carbon\Carbon::parse($user->end_date)->format('d M Y') }}</p>
                     </div>
                 </div>
-                <div class="text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                <div class="flex flex-wrap items-center gap-2 shrink-0 w-full md:w-auto mt-2 md:mt-0">
+                    <button type="button" onclick="openEditUserModal('{{ $user->id }}', '{{ addslashes($user->name) }}', '{{ addslashes($user->email) }}', '{{ addslashes($user->institution) }}', '{{ addslashes($user->major) }}', '{{ $user->start_date }}', '{{ $user->end_date }}')" class="px-3 py-1.5 bg-slate-100 text-slate-600 hover:bg-blue-50 hover:text-blue-600 rounded-lg text-xs font-semibold transition-colors">Edit</button>
+                    <button type="button" onclick="openResetPasswordModal('{{ $user->id }}', '{{ addslashes($user->name) }}')" class="px-3 py-1.5 bg-slate-100 text-slate-600 hover:bg-rose-50 hover:text-rose-600 rounded-lg text-xs font-semibold transition-colors">Reset Password</button>
+                    <button type="button" onclick="openCalendarModal('{{ $user->id }}', '{{ addslashes($user->name) }}', '{{ addslashes($user->institution) }}', '{{ \Carbon\Carbon::parse($user->start_date)->format('d M Y') }}', '{{ \Carbon\Carbon::parse($user->end_date)->format('d M Y') }}', '{{ addslashes($user->major) }}')" class="px-3 py-1.5 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        Kalender
+                    </button>
                 </div>
             </div>
             @empty
             <div class="p-8 text-center text-slate-500">
-                <p>Belum ada user terdaftar.</p>
+                <p>Belum ada pengguna terdaftar.</p>
             </div>
             @endforelse
         </div>
@@ -73,7 +85,7 @@
     <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
         <div class="p-6 border-b border-slate-100">
             <h2 class="text-lg font-bold text-slate-800">Permintaan Izin</h2>
-            <p class="text-sm text-slate-500">Terima atau tolak permintaan izin dari user.</p>
+            <p class="text-sm text-slate-500">Terima atau tolak permintaan izin dari pengguna.</p>
         </div>
         <div class="divide-y divide-slate-100">
             @forelse($permissions as $perm)
@@ -85,19 +97,29 @@
                             <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-blue-100 text-blue-700">Menunggu</span>
                         </div>
                         <p class="text-sm font-medium text-slate-700 mb-1">Tanggal Izin: {{ \Carbon\Carbon::parse($perm->date)->format('d F Y') }}</p>
-                        <p class="text-sm text-slate-600 bg-slate-50 p-3 rounded-lg border border-slate-100">Alasan: {{ $perm->reason }}</p>
+                        <div class="text-sm text-slate-600 bg-slate-50 p-3 rounded-lg border border-slate-100 mt-2 space-y-2">
+                            <div>
+                                <span class="font-semibold text-slate-700">Alasan:</span> 
+                                {{ $perm->reason_option }} 
+                                @if($perm->custom_reason)
+                                    <span class="text-slate-500 italic">({{ $perm->custom_reason }})</span>
+                                @endif
+                            </div>
+                            
+                            @if($perm->proof_file)
+                            <div>
+                                <span class="font-semibold text-slate-700">Lampiran:</span>
+                                <a href="{{ asset('storage/' . $perm->proof_file) }}" target="_blank" class="text-blue-600 hover:text-blue-700 hover:underline inline-flex items-center gap-1 font-medium">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path></svg>
+                                    Lihat File Lampiran
+                                </a>
+                            </div>
+                            @endif
+                        </div>
                     </div>
                     <div class="flex gap-2 shrink-0">
-                        <form method="POST" action="{{ route('admin.permission.update', $perm->id) }}">
-                            @csrf
-                            <input type="hidden" name="status" value="Approved">
-                            <button type="submit" class="px-4 py-2 bg-emerald-50 text-emerald-600 border border-emerald-200 hover:bg-emerald-100 font-semibold text-sm rounded-xl transition-colors">Terima</button>
-                        </form>
-                        <form method="POST" action="{{ route('admin.permission.update', $perm->id) }}">
-                            @csrf
-                            <input type="hidden" name="status" value="Rejected">
-                            <button type="submit" class="px-4 py-2 bg-rose-50 text-rose-600 border border-rose-200 hover:bg-rose-100 font-semibold text-sm rounded-xl transition-colors">Tolak</button>
-                        </form>
+                        <button type="button" onclick="openConfirmPermissionModal('{{ $perm->id }}', 'Approved', '{{ addslashes($perm->user->name) }}')" class="px-4 py-2 bg-emerald-50 text-emerald-600 border border-emerald-200 hover:bg-emerald-100 font-semibold text-sm rounded-xl transition-colors">Terima</button>
+                        <button type="button" onclick="openConfirmPermissionModal('{{ $perm->id }}', 'Rejected', '{{ addslashes($perm->user->name) }}')" class="px-4 py-2 bg-rose-50 text-rose-600 border border-rose-200 hover:bg-rose-100 font-semibold text-sm rounded-xl transition-colors">Tolak</button>
                     </div>
                 </div>
             </div>
@@ -109,15 +131,15 @@
         </div>
     </div>
 </div>
-
+@push('modals')
 
 <!-- Modal Tambah User -->
 <div id="modalTambahUser" class="fixed inset-0 z-50 hidden bg-slate-900/50 backdrop-blur-sm overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-    <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+    <div class="flex min-h-screen w-full items-center justify-center p-4 text-center sm:p-0">
         <div class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
             <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4 border-b border-slate-100">
                 <div class="flex justify-between items-center">
-                    <h3 class="text-lg font-bold leading-6 text-slate-900" id="modal-title">Tambah User Baru</h3>
+                    <h3 class="text-lg font-bold leading-6 text-slate-900" id="modal-title">Tambah Pengguna Baru</h3>
                     <button type="button" onclick="closeModal('modalTambahUser')" class="text-slate-400 hover:text-slate-500">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                     </button>
@@ -156,7 +178,7 @@
                         <input type="text" name="institution" value="{{ old('institution') }}" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-sm outline-none">
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-1">Jurusan / Program Studi</label>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1">Jurusan/Program Studi</label>
                         <input type="text" name="major" value="{{ old('major') }}" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-sm outline-none">
                     </div>
                     <div class="grid grid-cols-2 gap-4">
@@ -165,13 +187,13 @@
                             <input type="date" name="start_date" value="{{ old('start_date') }}" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-sm outline-none">
                         </div>
                         <div>
-                            <label class="block text-sm font-semibold text-slate-700 mb-1">Durasi</label>
-                            <input type="text" name="duration" value="{{ old('duration') }}" placeholder="Contoh: 3 Bulan" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-sm outline-none">
+                            <label class="block text-sm font-semibold text-slate-700 mb-1">Tanggal Selesai Magang</label>
+                            <input type="date" name="end_date" value="{{ old('end_date') }}" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-sm outline-none">
                         </div>
                     </div>
                 </div>
                 <div class="bg-slate-50 px-4 py-4 sm:flex sm:flex-row-reverse sm:px-6 border-t border-slate-100">
-                    <button type="submit" class="inline-flex w-full justify-center rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 sm:ml-3 sm:w-auto transition-colors">Simpan User</button>
+                    <button type="submit" class="inline-flex w-full justify-center rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 sm:ml-3 sm:w-auto transition-colors">Tambahkan Pengguna</button>
                     <button type="button" onclick="closeModal('modalTambahUser')" class="mt-3 inline-flex w-full justify-center rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-slate-50 sm:mt-0 sm:w-auto transition-colors">Batal</button>
                 </div>
             </form>
@@ -179,9 +201,61 @@
     </div>
 </div>
 
-<!-- Modal Kalender User -->
+<!-- Modal Edit User -->
+<div id="modalEditUser" class="fixed inset-0 z-[60] hidden bg-slate-900/50 backdrop-blur-sm overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="flex min-h-screen w-full items-center justify-center p-4 text-center sm:p-0">
+        <div class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+            <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4 border-b border-slate-100">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-lg font-bold leading-6 text-slate-900">Edit Pengguna</h3>
+                    <button type="button" onclick="closeModal('modalEditUser')" class="text-slate-400 hover:text-slate-500">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+            </div>
+            
+            <form id="formEditUser" method="POST" action="">
+                @csrf
+                @method('PUT')
+                <div class="px-4 py-5 sm:p-6 space-y-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1">Nama Lengkap</label>
+                        <input type="text" name="name" id="edit_name" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-sm outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1">Email</label>
+                        <input type="email" name="email" id="edit_email" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-sm outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1">Asal Instansi</label>
+                        <input type="text" name="institution" id="edit_institution" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-sm outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1">Jurusan / Program Studi</label>
+                        <input type="text" name="major" id="edit_major" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-sm outline-none">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-1">Tanggal Masuk</label>
+                            <input type="date" name="start_date" id="edit_start_date" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-sm outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-1">Tanggal Selesai Magang</label>
+                            <input type="date" name="end_date" id="edit_end_date" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-sm outline-none">
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-slate-50 px-4 py-4 sm:flex sm:flex-row-reverse sm:px-6 border-t border-slate-100">
+                    <button type="submit" class="inline-flex w-full justify-center rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 sm:ml-3 sm:w-auto transition-colors">Simpan Perubahan</button>
+                    <button type="button" onclick="closeModal('modalEditUser')" class="mt-3 inline-flex w-full justify-center rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-slate-50 sm:mt-0 sm:w-auto transition-colors">Batal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <div id="modalKalenderUser" class="fixed inset-0 z-50 hidden bg-slate-900/50 backdrop-blur-sm overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-    <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+    <div class="flex min-h-screen w-full items-center justify-center p-4 text-center sm:p-0">
         <div class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-4xl">
             <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
@@ -232,6 +306,7 @@
         </div>
     </div>
 </div>
+@endpush
 
 @endsection
 
@@ -275,10 +350,24 @@
     let currentAdminMonth = null;
     let currentAdminYear = null;
 
-    function openCalendarModal(userId, name, institution, startDate, duration, major) {
+    function openEditUserModal(id, name, email, institution, major, startDate, endDate) {
+        const form = document.getElementById('formEditUser');
+        form.action = `{{ url('/admin/user') }}/${id}`;
+        
+        document.getElementById('edit_name').value = name;
+        document.getElementById('edit_email').value = email;
+        document.getElementById('edit_institution').value = institution;
+        document.getElementById('edit_major').value = major;
+        document.getElementById('edit_start_date').value = startDate;
+        document.getElementById('edit_end_date').value = endDate;
+        
+        openModal('modalEditUser');
+    }
+
+    function openCalendarModal(userId, name, institution, startDate, endDateStr, major) {
         document.getElementById('judulKalender').innerText = name;
         const majorText = major ? ' - ' + major : '';
-        document.getElementById('infoDetailUser').innerText = `${institution}${majorText} • Mulai: ${startDate} • Durasi: ${duration}`;
+        document.getElementById('infoDetailUser').innerText = `${institution}${majorText} • Periode: ${startDate} s.d ${endDateStr}`;
         
         currentAdminUserId = userId;
         currentAdminMonth = null;
@@ -309,7 +398,7 @@
         const grid = document.getElementById('gridKalenderBulan');
         grid.innerHTML = '<div class="col-span-7 text-center py-8 text-slate-500">Memuat data...</div>';
 
-        let url = `/admin/user/${userId}/calendar`;
+        let url = `{{ url('/admin/user') }}/${userId}/calendar`;
         if (month && year) {
             url += `?month=${month}&year=${year}`;
         }
@@ -396,6 +485,128 @@
         }
     }
 </script>
+
+<!-- Modal Konfirmasi Reset Password -->
+<div id="reset-password-modal" class="fixed inset-0 z-50 hidden bg-slate-900/50 backdrop-blur-sm items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden transform transition-all">
+        <div class="bg-blue-50 border-b border-blue-100 p-4 flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-blue-200/50 flex items-center justify-center text-blue-600 flex-shrink-0">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+            </div>
+            <div class="flex-1">
+                <h3 class="font-bold text-slate-800">Reset Password</h3>
+                <p class="text-xs text-blue-600">Konfirmasi tindakan</p>
+            </div>
+            <button type="button" onclick="closeResetPasswordModal()" class="text-slate-400 hover:text-slate-600 bg-white/50 hover:bg-white rounded-xl p-2 transition-all">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+        <div class="p-5">
+            <p class="text-sm text-slate-600">Anda yakin ingin mereset password untuk <strong id="reset-user-name" class="text-slate-800"></strong> menjadi <strong class="text-slate-800">password</strong>?</p>
+            
+            <form id="reset-password-form" method="POST" action="">
+                @csrf
+                <div class="flex gap-2 justify-end mt-6">
+                    <button type="button" onclick="closeResetPasswordModal()" class="px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-200 bg-slate-100 rounded-xl transition-all">
+                        Batal
+                    </button>
+                    <button type="submit" class="px-4 py-2 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-md transition-all">
+                        Ya, Reset Password
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openResetPasswordModal(id, name) {
+        document.getElementById('reset-user-name').innerText = name;
+        document.getElementById('reset-password-form').action = `{{ url('/admin/user') }}/${id}/reset-password`;
+        const modal = document.getElementById('reset-password-modal');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+
+    function closeResetPasswordModal() {
+        const modal = document.getElementById('reset-password-modal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+
+    function openConfirmPermissionModal(id, action, name) {
+        const modal = document.getElementById('confirm-permission-modal');
+        const form = document.getElementById('confirm-permission-form');
+        const statusInput = document.getElementById('permission-status-input');
+        const title = document.getElementById('permission-modal-title');
+        const text = document.getElementById('permission-modal-text');
+        const submitBtn = document.getElementById('permission-submit-btn');
+        const iconContainer = document.getElementById('permission-icon-container');
+
+        form.action = `{{ url('/admin/permission') }}/${id}`;
+        statusInput.value = action;
+        
+        if (action === 'Approved') {
+            title.innerText = 'Terima Izin';
+            text.innerHTML = `Anda yakin ingin <strong>menerima</strong> pengajuan izin dari <strong>${name}</strong>?`;
+            
+            submitBtn.innerText = 'Ya, Terima Izin';
+            submitBtn.className = 'px-4 py-2 text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl shadow-md transition-all';
+            
+            iconContainer.className = 'w-10 h-10 rounded-full bg-emerald-200/50 flex items-center justify-center text-emerald-600 flex-shrink-0';
+            iconContainer.innerHTML = '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
+        } else {
+            title.innerText = 'Tolak Izin';
+            text.innerHTML = `Anda yakin ingin <strong>menolak</strong> pengajuan izin dari <strong>${name}</strong>?`;
+            
+            submitBtn.innerText = 'Ya, Tolak Izin';
+            submitBtn.className = 'px-4 py-2 text-sm font-bold text-white bg-rose-600 hover:bg-rose-700 rounded-xl shadow-md transition-all';
+            
+            iconContainer.className = 'w-10 h-10 rounded-full bg-rose-200/50 flex items-center justify-center text-rose-600 flex-shrink-0';
+            iconContainer.innerHTML = '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>';
+        }
+
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+
+    function closeConfirmPermissionModal() {
+        const modal = document.getElementById('confirm-permission-modal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+</script>
+
+<!-- Modal Konfirmasi Permission -->
+<div id="confirm-permission-modal" class="fixed inset-0 z-50 hidden bg-slate-900/50 backdrop-blur-sm items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden transform transition-all">
+        <div class="bg-slate-50 border-b border-slate-100 p-4 flex items-center gap-3">
+            <div id="permission-icon-container"></div>
+            <div class="flex-1">
+                <h3 id="permission-modal-title" class="font-bold text-slate-800">Konfirmasi Izin</h3>
+                <p class="text-xs text-slate-500">Konfirmasi tindakan</p>
+            </div>
+            <button type="button" onclick="closeConfirmPermissionModal()" class="text-slate-400 hover:text-slate-600 bg-white/50 hover:bg-white rounded-xl p-2 transition-all">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+        <div class="p-5">
+            <p id="permission-modal-text" class="text-sm text-slate-600"></p>
+            
+            <form id="confirm-permission-form" method="POST" action="">
+                @csrf
+                <input type="hidden" name="status" id="permission-status-input" value="">
+                <div class="flex gap-2 justify-end mt-6">
+                    <button type="button" onclick="closeConfirmPermissionModal()" class="px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-200 bg-slate-100 rounded-xl transition-all">
+                        Batal
+                    </button>
+                    <button id="permission-submit-btn" type="submit" class=""></button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <style>
     .animate-fade-in {
         animation: fadeIn 0.3s ease-in-out;

@@ -12,6 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('duration');
             $table->date('end_date')->nullable()->after('start_date');
         });
     }
@@ -23,6 +24,7 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->dropColumn('end_date');
+            $table->string('duration')->nullable()->after('start_date');
         });
     }
 };

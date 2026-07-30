@@ -1,12 +1,12 @@
 @extends('layouts.app')
 
-@section('title', 'Kalender Kehadiran')
+@section('title', 'Riwayat Kehadiran')
 
 @section('content')
 <div class="space-y-6">
     <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 flex flex-col sm:flex-row justify-between items-center gap-4">
         <div>
-            <h1 class="text-xl font-bold text-slate-800">Kalender Kehadiran</h1>
+            <h1 class="text-xl font-bold text-slate-800">Riwayat Kehadiran</h1>
             <p class="text-sm text-slate-500">Lihat riwayat kehadiran Anda pada bulan ini.</p>
         </div>
         <div class="flex items-center gap-3 bg-slate-50 p-2 rounded-xl">

@@ -46,18 +46,15 @@
     <div class="w-full max-w-md relative z-10">
         <div class="glass-panel rounded-3xl p-8 relative overflow-hidden shadow-2xl shadow-blue-900/40">
             <div class="text-center mb-8">
-                <div class="inline-flex items-center justify-center w-12 h-12 bg-white/20 rounded-xl mb-4 border border-white/30 backdrop-blur-sm">
-                    <span class="text-lg font-bold text-white">B</span>
-                </div>
                 <h2 class="text-2xl font-bold text-white">Login</h2>
-                <p class="text-blue-200 text-sm mt-2">Sistem Presensi Magang</p>
+                <p class="text-blue-200 text-sm mt-2">Presensi Magang Bapenda NTB</p>
             </div>
 
             <form method="POST" action="{{ route('login') }}" class="space-y-4">
                 @csrf
 
                 <div>
-                    <label for="email" class="block text-sm font-semibold text-blue-100 mb-2">Email atau Username</label>
+                    <label for="email" class="block text-sm font-semibold text-blue-100 mb-2">Email</label>
                     <input id="email" type="text" name="email" value="{{ old('email') }}" required autofocus autocomplete="username"
                         class="w-full px-4 py-2.5 bg-white/10 border border-white/20 rounded-lg text-white placeholder-blue-200/50 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent transition-all backdrop-blur-sm">
                     @error('email')
@@ -85,7 +82,7 @@
             
             <div class="mt-6 text-center border-t border-white/10 pt-4">
                 <p class="text-xs text-blue-200">
-                    Hubungi admin untuk pembuatan akun
+                    Pembuatan akun hanya bisa melalui admin
                 </p>
             </div>
         </div>

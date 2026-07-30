@@ -38,7 +38,7 @@ Route::middleware(['auth'])->prefix('intern')->name('intern.')->group(function (
     Route::post('/profile/update-password', [\App\Http\Controllers\Intern\ProfileController::class, 'updatePassword'])->name('profile.update_password');
 
     // Attendance history
-    Route::get('/attendance', [AttendanceController::class, 'calendar'])->name('attendance.index');
+    Route::get('/attendance', [AttendanceController::class, 'history'])->name('attendance.index');
 });
 
 use App\Http\Controllers\Admin\AdminController;
@@ -49,8 +49,8 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
     Route::middleware(\App\Http\Middleware\CheckAdminRole::class)->group(function () {
         Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
         Route::post('/user/store', [AdminController::class, 'storeUser'])->name('admin.user.store');
-        Route::post('/user/{id}/update', [AdminController::class, 'updateUser'])->name('admin.user.update');
-        Route::post('/user/{id}/reset-password', [AdminController::class, 'resetPassword'])->name('admin.user.reset_password');
+        Route::put('/user/{id}', [AdminController::class, 'updateUser'])->name('admin.user.update');
+        Route::post('/user/{id}/reset-password', [AdminController::class, 'resetUserPassword'])->name('admin.user.reset_password');
         Route::delete('/user/{id}', [AdminController::class, 'deleteUser'])->name('admin.user.delete');
         Route::post('/permission/{id}', [AdminController::class, 'updatePermission'])->name('admin.permission.update');
         Route::get('/user/{id}/calendar', [AdminController::class, 'getUserCalendar'])->name('admin.user.calendar');
