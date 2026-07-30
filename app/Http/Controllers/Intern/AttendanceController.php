@@ -39,12 +39,55 @@ class AttendanceController extends Controller
     }
 
     /**
+     * Halaman Kalender Kehadiran
+     */
+    public function calendar(Request $request)
+    {
+        $user = Auth::user();
+        
+        $month = $request->query('month', Carbon::now()->format('m'));
+        $year = $request->query('year', Carbon::now()->format('Y'));
+        
+        $startDate = Carbon::parse($user->created_at ?? $user->start_date)->startOfMonth();
+        $currentRequestedDate = Carbon::createFromDate($year, $month, 1)->startOfMonth();
+
+        if ($currentRequestedDate->lt($startDate)) {
+            $currentRequestedDate = $startDate;
+            $month = $startDate->format('m');
+            $year = $startDate->format('Y');
+        }
+        
+        $currentMonth = $year . '-' . str_pad($month, 2, '0', STR_PAD_LEFT);
+        
+        // Fetch attendances for current month
+        $attendances = Attendance::where('user_id', $user->id)
+            ->where('date', 'like', $currentMonth . '%')
+            ->get();
+            
+        // Fetch permissions for current month
+        $permissions = \App\Models\Permission::where('user_id', $user->id)
+            ->where('date', 'like', $currentMonth . '%')
+            ->get();
+
+        $userCreatedAt = Carbon::parse($user->created_at ?? $user->start_date)->toDateString();
+
+        return view('intern.attendance.calendar', compact('attendances', 'permissions', 'month', 'year', 'startDate', 'userCreatedAt'));
+    }
+
+    /**
      * Halaman Scan / Pengambilan Geolocation untuk Presensi
      */
     public function scanView()
     {
-        $userId = Auth::id();
+        $user = Auth::user();
         $today = Carbon::today()->toDateString();
+
+        if ($user->end_date && $today > $user->end_date) {
+            return redirect()->route('intern.dashboard')
+                ->with('error', 'Masa magang Anda telah selesai pada tanggal ' . Carbon::parse($user->end_date)->translatedFormat('d F Y') . '. Anda tidak dapat lagi melakukan presensi.');
+        }
+
+        $userId = $user->id;
 
         $todayAttendance = Attendance::where('user_id', $userId)
             ->where('date', $today)
@@ -63,14 +106,20 @@ class AttendanceController extends Controller
      */
     public function storeIn(Request $request)
     {
+        $user = Auth::user();
+        $now = Carbon::now('Asia/Makassar'); // WITA (UTC+8)
+        $today = $now->toDateString();
+
+        if ($user->end_date && $today > $user->end_date) {
+            return redirect()->route('intern.dashboard')
+                ->with('error', 'Masa magang Anda telah selesai pada tanggal ' . Carbon::parse($user->end_date)->translatedFormat('d F Y') . '. Anda tidak dapat lagi melakukan presensi.');
+        }
+
         $request->validate([
             'latitude'  => 'required|numeric',
             'longitude' => 'required|numeric',
         ]);
 
-        $user = Auth::user();
-        $now = Carbon::now('Asia/Makassar'); // WITA (UTC+8)
-        $today = $now->toDateString();
         $currentTime = $now->toTimeString();
 
         // 1. Cek apakah sudah pernah presensi masuk hari ini
@@ -143,6 +192,12 @@ class AttendanceController extends Controller
         $user = Auth::user();
         $now = Carbon::now('Asia/Makassar');
         $today = $now->toDateString();
+
+        if ($user->end_date && $today > $user->end_date) {
+            return redirect()->route('intern.dashboard')
+                ->with('error', 'Masa magang Anda telah selesai pada tanggal ' . Carbon::parse($user->end_date)->translatedFormat('d F Y') . '. Anda tidak dapat lagi melakukan presensi.');
+        }
+
         $currentTime = $now->toTimeString();
 
         // 1. Cari data presensi hari ini

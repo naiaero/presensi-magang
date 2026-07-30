@@ -9,7 +9,7 @@
     <div class="md:col-span-7 lg:col-span-8 space-y-5 md:space-y-8">
         
         <!-- Card Ringkasan Profil & Status -->
-        <div class="bg-gradient-to-r from-blue-700 to-indigo-800 text-white rounded-2xl p-5 shadow-lg">
+        <div class="bg-blue-700 text-white rounded-2xl p-5 shadow-lg">
             <div class="flex items-center justify-between mb-4">
                 <div>
                     <p class="text-xs text-blue-200">Selamat Datang,</p>
@@ -108,20 +108,48 @@
             </div>
         </div>
 
+        @php
+            $isExpired = auth()->user()->end_date && \Carbon\Carbon::today()->toDateString() > auth()->user()->end_date;
+        @endphp
+
+        @if($isExpired)
+            <div class="bg-rose-50 border border-rose-200 rounded-2xl p-4 flex items-start space-x-3 shadow-sm">
+                <div class="w-8 h-8 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                </div>
+                <div class="text-xs text-rose-800">
+                    <p class="font-bold md:text-sm">Masa Magang Telah Selesai</p>
+                    <p class="text-[11px] md:text-xs mt-1 text-rose-700 leading-relaxed">
+                        Masa magang Anda telah berakhir pada tanggal <strong>{{ \Carbon\Carbon::parse(auth()->user()->end_date)->translatedFormat('d F Y') }}</strong>. Status akun Anda saat ini <strong>Tidak Aktif</strong> dan Anda tidak dapat lagi melakukan presensi.
+                    </p>
+                </div>
+            </div>
+        @endif
+
         <!-- Tombol Aksi Cepat (Quick Actions) -->
         <div class="space-y-3">
             <h3 class="text-xs md:text-sm font-bold uppercase tracking-wider text-slate-500">Menu Aksi Cepat</h3>
 
             <div class="grid grid-cols-2 gap-3 md:gap-4">
                 <!-- Tombol Absen Masuk / Pulang -->
-                <a href="{{ route('intern.attendance.scan') }}" 
-                   class="flex flex-col items-center justify-center p-5 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white rounded-2xl shadow-md shadow-blue-200 transition-all text-center">
-                    <svg class="w-8 h-8 md:w-10 md:h-10 mb-2 md:mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                    <span class="text-xs md:text-sm font-bold">Presensi Cepat</span>
-                    <span class="text-[10px] md:text-xs text-blue-100 font-light mt-0.5">Masuk / Pulang</span>
-                </a>
+                @if(!$isExpired)
+                    <a href="{{ route('intern.attendance.scan') }}" 
+                       class="flex flex-col items-center justify-center p-5 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white rounded-2xl shadow-md shadow-blue-200 transition-all text-center">
+                        <svg class="w-8 h-8 md:w-10 md:h-10 mb-2 md:mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <span class="text-xs md:text-sm font-bold">Presensi Cepat</span>
+                        <span class="text-[10px] md:text-xs text-blue-100 font-light mt-0.5">Masuk / Pulang</span>
+                    </a>
+                @else
+                    <div class="flex flex-col items-center justify-center p-5 bg-slate-300 text-slate-500 rounded-2xl cursor-not-allowed text-center opacity-70">
+                        <svg class="w-8 h-8 md:w-10 md:h-10 mb-2 md:mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <span class="text-xs md:text-sm font-bold">Presensi Tidak Aktif</span>
+                        <span class="text-[10px] md:text-xs text-slate-500 font-light mt-0.5">Magang Selesai</span>
+                    </div>
+                @endif
 
                 <!-- Tombol Form Izin -->
                 <a href="{{ route('intern.permission.create') }}" 

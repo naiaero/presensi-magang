@@ -7,7 +7,7 @@
 
     <!-- Header Card / Header Biodata -->
     <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 text-center relative overflow-hidden">
-        <div class="absolute top-0 left-0 right-0 h-16 bg-gradient-to-r from-blue-600 to-indigo-700"></div>
+        <div class="absolute top-0 left-0 right-0 h-16 bg-blue-600"></div>
         
         <div class="relative pt-4">
             <!-- Foto Avatar / Initials -->

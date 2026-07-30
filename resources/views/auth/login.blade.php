@@ -43,57 +43,49 @@
 </head>
 <body class="antialiased animated-bg text-slate-800 dark:text-slate-200 min-h-screen flex items-center justify-center p-6 selection:bg-cyan-500 selection:text-white">
 
-    <div class="w-full max-w-md relative perspective-1000 z-10">
-        <!-- Floating shapes behind card -->
-        <div class="absolute -top-10 -right-10 w-32 h-32 bg-cyan-400 rounded-full mix-blend-multiply filter blur-2xl opacity-60 animate-pulse"></div>
-        <div class="absolute -bottom-10 -left-10 w-32 h-32 bg-blue-600 rounded-full mix-blend-multiply filter blur-2xl opacity-60 animate-pulse" style="animation-delay: 2s;"></div>
-
+    <div class="w-full max-w-md relative z-10">
         <div class="glass-panel rounded-3xl p-8 relative overflow-hidden shadow-2xl shadow-blue-900/40">
             <div class="text-center mb-8">
-                <div class="inline-flex items-center justify-center w-14 h-14 bg-white/20 rounded-2xl mb-4 border border-white/30 backdrop-blur-sm shadow-inner">
-                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8V7a4 4 0 00-8 0v4h8z"/></svg>
+                <div class="inline-flex items-center justify-center w-12 h-12 bg-white/20 rounded-xl mb-4 border border-white/30 backdrop-blur-sm">
+                    <span class="text-lg font-bold text-white">B</span>
                 </div>
-                <h2 class="text-2xl font-bold text-white tracking-tight">Selamat Datang</h2>
-                <p class="text-blue-200 text-sm mt-1">Masuk untuk mencatat presensi Anda hari ini</p>
+                <h2 class="text-2xl font-bold text-white">Login</h2>
+                <p class="text-blue-200 text-sm mt-2">Sistem Presensi Magang</p>
             </div>
 
-            <form method="POST" action="{{ route('login') }}" class="space-y-5">
+            <form method="POST" action="{{ route('login') }}" class="space-y-4">
                 @csrf
 
                 <div>
-                    <label for="email" class="block text-xs font-semibold text-blue-100 uppercase tracking-wide mb-1.5 ml-1">Email atau Username</label>
-                    <input id="email" type="text" name="email" value="{{ old('email') }}" required autofocus autocomplete="username" placeholder="contoh: admin@admin.com atau admin"
-                        class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-blue-200/50 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent transition-all backdrop-blur-sm">
+                    <label for="email" class="block text-sm font-semibold text-blue-100 mb-2">Email atau Username</label>
+                    <input id="email" type="text" name="email" value="{{ old('email') }}" required autofocus autocomplete="username"
+                        class="w-full px-4 py-2.5 bg-white/10 border border-white/20 rounded-lg text-white placeholder-blue-200/50 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent transition-all backdrop-blur-sm">
                     @error('email')
-                        <p class="text-red-300 text-xs mt-1.5 font-medium ml-1 flex items-center gap-1">
-                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                            {{ $message }}
-                        </p>
+                        <p class="text-red-300 text-xs mt-1.5">{{ $message }}</p>
                     @enderror
                 </div>
 
                 <div>
-                    <label for="password" class="block text-xs font-semibold text-blue-100 uppercase tracking-wide mb-1.5 ml-1">Password</label>
+                    <label for="password" class="block text-sm font-semibold text-blue-100 mb-2">Password</label>
                     <input id="password" type="password" name="password" required autocomplete="current-password"
-                        class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-blue-200/50 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent transition-all backdrop-blur-sm">
+                        class="w-full px-4 py-2.5 bg-white/10 border border-white/20 rounded-lg text-white placeholder-blue-200/50 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent transition-all backdrop-blur-sm">
                 </div>
 
-                <div class="flex items-center justify-between pt-1">
-                    <label class="flex items-center gap-2 cursor-pointer group">
-                        <input type="checkbox" name="remember" class="w-4 h-4 rounded bg-white/10 border-white/20 text-cyan-500 focus:ring-cyan-500 focus:ring-offset-0 bg-transparent cursor-pointer">
-                        <span class="text-sm text-blue-200 group-hover:text-white transition-colors">Ingat Saya</span>
+                <div class="flex items-center pt-1">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" name="remember" class="w-4 h-4 rounded bg-white/10 border-white/20 text-cyan-500 focus:ring-cyan-500 focus:ring-offset-0 cursor-pointer">
+                        <span class="text-sm text-blue-200">Ingat saya</span>
                     </label>
                 </div>
 
-                <button type="submit" class="w-full py-3.5 mt-4 bg-white text-blue-700 font-bold rounded-xl shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:shadow-[0_0_25px_rgba(255,255,255,0.5)] hover:bg-blue-50 transition-all hover:-translate-y-0.5 active:translate-y-0">
-                    Masuk
+                <button type="submit" class="w-full py-2.5 mt-4 bg-white text-blue-700 font-semibold rounded-lg shadow-lg hover:shadow-xl hover:bg-blue-50 transition-all">
+                    Login
                 </button>
             </form>
             
-            <div class="mt-8 text-center border-t border-white/10 pt-4">
-                <p class="text-xs text-blue-200/80">
-                    Belum memiliki akun? <br>
-                    <span class="text-white font-medium mt-1 inline-block">Hubungi admin untuk pendaftaran akun magang.</span>
+            <div class="mt-6 text-center border-t border-white/10 pt-4">
+                <p class="text-xs text-blue-200">
+                    Hubungi admin untuk pembuatan akun
                 </p>
             </div>
         </div>
