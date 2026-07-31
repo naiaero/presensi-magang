@@ -79,12 +79,6 @@
                     Login
                 </button>
             </form>
-            
-            <div class="mt-6 text-center border-t border-white/10 pt-4">
-                <p class="text-xs text-blue-200">
-                    Pembuatan akun hanya bisa melalui admin
-                </p>
-            </div>
         </div>
     </div>
 </body>
