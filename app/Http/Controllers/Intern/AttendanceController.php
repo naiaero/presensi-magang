@@ -215,7 +215,7 @@ class AttendanceController extends Controller
         ]);
 
         return redirect()->route('intern.dashboard')
-            ->with('success', 'Presensi masuk berhasil dicatat pada jam ' . $currentTime . ' WITA.');
+            ->with('success', 'Presensi masuk berhasil dilakukan');
     }
 
     /**
@@ -277,7 +277,7 @@ class AttendanceController extends Controller
         ]);
 
         return redirect()->route('intern.dashboard')
-            ->with('success', 'Presensi pulang berhasil dicatat pada jam ' . $currentTime . ' WITA.');
+            ->with('success', 'Presensi pulang berhasil dilakukan');
     }
 
     /**

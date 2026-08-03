@@ -93,6 +93,6 @@ class PermissionController extends Controller
         }
 
         return redirect()->route('intern.dashboard')
-            ->with('success', 'Pengajuan izin berhasil dikirim dan otomatis disetujui oleh sistem.');
+            ->with('success', 'Pengajuan izin berhasil dilakukan.');
     }
 }
