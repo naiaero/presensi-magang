@@ -3,45 +3,79 @@
 @section('title', 'Dashboard')
 
 @section('content')
+@php
+    $permissionToast = null;
+
+    if (isset($todayPermission)) {
+        if ($todayPermission->status === 'Approved') {
+            $permissionToast = [
+                'type' => 'success',
+                'title' => 'Pengajuan Izin Diterima',
+                'message' => 'Pengajuan izin Anda untuk hari ini (' . $todayPermission->reason_option . ') telah disetujui secara otomatis oleh sistem. Status presensi Anda hari ini tercatat sebagai Hadir.',
+            ];
+        } elseif ($todayPermission->status === 'Rejected') {
+            $permissionToast = [
+                'type' => 'error',
+                'title' => 'Pengajuan Izin Ditolak',
+                'message' => 'Pengajuan izin Anda untuk hari ini (' . $todayPermission->reason_option . ') telah ditolak oleh Admin. Silakan hubungi pembimbing atau admin untuk informasi lebih lanjut.',
+            ];
+        } else {
+            $permissionToast = [
+                'type' => 'info',
+                'title' => 'Pengajuan Izin Menunggu Konfirmasi',
+                'message' => 'Pengajuan izin Anda untuk hari ini (' . $todayPermission->reason_option . ') telah terkirim dan sedang menunggu verifikasi dari Admin.',
+            ];
+        }
+    }
+@endphp
+
 <div class="space-y-5">
-    @if(isset($todayPermission))
-        @if($todayPermission->status === 'Approved')
-            <div class="bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-2xl p-4 flex items-start space-x-3 shadow-sm">
-                <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+    @if($permissionToast)
+        @php
+            $toastClasses = [
+                'success' => ['bg' => 'bg-emerald-50 border border-emerald-200 text-emerald-800', 'iconBg' => 'bg-emerald-100 text-emerald-600'],
+                'error' => ['bg' => 'bg-rose-50 border border-rose-200 text-rose-800', 'iconBg' => 'bg-rose-100 text-rose-600'],
+                'info' => ['bg' => 'bg-blue-50 border border-blue-200 text-blue-800', 'iconBg' => 'bg-blue-100 text-blue-600'],
+            ];
+
+            $currentToast = $toastClasses[$permissionToast['type']];
+        @endphp
+
+        <div id="permission-toast" class="fixed top-5 right-5 z-[60] max-w-sm w-[calc(100vw-2rem)] rounded-2xl border {{ $currentToast['bg'] }} p-4 shadow-xl pointer-events-auto opacity-0 translate-y-[-10px] transition-all duration-300 ease-out">
+            <div class="flex items-start gap-3">
+                <div class="w-8 h-8 rounded-full {{ $currentToast['iconBg'] }} flex items-center justify-center flex-shrink-0 mt-0.5">
+                    @if($permissionToast['type'] === 'success')
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                    @elseif($permissionToast['type'] === 'error')
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    @else
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    @endif
                 </div>
-                <div>
-                    <h3 class="font-bold text-sm">Pengajuan Izin Diterima</h3>
-                    <p class="text-xs mt-1 text-emerald-700 leading-relaxed">
-                        Pengajuan izin Anda untuk hari ini (<strong>{{ $todayPermission->reason_option }}</strong>) telah <strong>disetujui</strong> oleh Admin. Status presensi Anda hari ini tercatat sebagai Hadir.
-                    </p>
-                </div>
-            </div>
-        @elseif($todayPermission->status === 'Rejected')
-            <div class="bg-rose-50 border border-rose-200 text-rose-800 rounded-2xl p-4 flex items-start space-x-3 shadow-sm">
-                <div class="w-8 h-8 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                </div>
-                <div>
-                    <h3 class="font-bold text-sm">Pengajuan Izin Ditolak</h3>
-                    <p class="text-xs mt-1 text-rose-700 leading-relaxed">
-                        Pengajuan izin Anda untuk hari ini (<strong>{{ $todayPermission->reason_option }}</strong>) telah <strong>ditolak</strong> oleh Admin. Silakan hubungi pembimbing atau admin untuk informasi lebih lanjut.
-                    </p>
-                </div>
-            </div>
-        @else
-            <div class="bg-blue-50 border border-blue-200 text-blue-800 rounded-2xl p-4 flex items-start space-x-3 shadow-sm">
-                <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                </div>
-                <div>
-                    <h3 class="font-bold text-sm">Pengajuan Izin Menunggu Konfirmasi</h3>
-                    <p class="text-xs mt-1 text-blue-700 leading-relaxed">
-                        Pengajuan izin Anda untuk hari ini (<strong>{{ $todayPermission->reason_option }}</strong>) telah terkirim dan sedang menunggu verifikasi dari Admin.
-                    </p>
+
+                <div class="flex-1">
+                    <h3 class="font-bold text-sm">{{ $permissionToast['title'] }}</h3>
+                    <p class="text-xs mt-1 leading-relaxed opacity-90">{{ $permissionToast['message'] }}</p>
                 </div>
             </div>
-        @endif
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const toast = document.getElementById('permission-toast');
+                if (!toast) return;
+
+                requestAnimationFrame(() => {
+                    toast.classList.remove('opacity-0', 'translate-y-[-10px]');
+                    toast.classList.add('opacity-100', 'translate-y-0');
+                });
+
+                setTimeout(() => {
+                    toast.classList.add('opacity-0', 'translate-y-[-10px]');
+                    setTimeout(() => toast.remove(), 300);
+                }, 3200);
+            });
+        </script>
     @endif
 
     <div class="grid grid-cols-1 md:grid-cols-12 gap-5 md:gap-8">

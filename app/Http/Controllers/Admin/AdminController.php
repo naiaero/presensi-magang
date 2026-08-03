@@ -16,7 +16,7 @@ class AdminController extends Controller
     {
 
         $users = User::where('role', 'intern')->get();
-        $permissions = Permission::with('user')->where('status', 'Pending')->get();
+        $permissions = Permission::with('user')->orderBy('date', 'desc')->get();
 
         return view('admin.dashboard', compact('users', 'permissions'));
     }

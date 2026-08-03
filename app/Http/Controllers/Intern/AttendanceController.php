@@ -40,7 +40,17 @@ class AttendanceController extends Controller
             ->where('date', $today)
             ->first();
 
-        return view('intern.dashboard', compact('todayAttendance', 'recentAttendances', 'todayPermission'));
+        $toastPermission = null;
+        if ($todayPermission) {
+            $hasShownToast = session()->get('permission_toast_shown', false);
+
+            if (!$hasShownToast) {
+                $toastPermission = $todayPermission;
+                session()->put('permission_toast_shown', true);
+            }
+        }
+
+        return view('intern.dashboard', compact('todayAttendance', 'recentAttendances', 'todayPermission', 'toastPermission'));
     }
 
     /**

@@ -63,8 +63,8 @@
                     <span class="text-sm">Beranda</span>
                 </a>
 
-                <a href="{{ route('intern.attendance.scan') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all {{ request()->routeIs('intern.attendance.*') ? 'bg-blue-50 text-blue-700 font-bold' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800' }}">
-                    <svg class="w-5 h-5 {{ request()->routeIs('intern.attendance.*') ? 'text-blue-600' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <a href="{{ route('intern.attendance.scan') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all {{ request()->routeIs('intern.attendance.scan') ? 'bg-blue-50 text-blue-700 font-bold' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800' }}">
+                    <svg class="w-5 h-5 {{ request()->routeIs('intern.attendance.scan') ? 'text-blue-600' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
                     <span class="text-sm">Presensi</span>
@@ -167,12 +167,12 @@
                     </a>
 
                     <a href="{{ route('intern.attendance.scan') }}" 
-                       class="flex flex-col items-center justify-center py-2 rounded-xl transition-all {{ request()->routeIs('intern.attendance.*') ? 'text-blue-700 font-bold' : 'text-slate-400 hover:text-slate-600' }}">
+                       class="flex flex-col items-center justify-center py-2 rounded-xl transition-all {{ request()->routeIs('intern.attendance.scan') ? 'text-blue-700 font-bold' : 'text-slate-400 hover:text-slate-600' }}">
                         <div class="relative">
                             <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
-                            @if(request()->routeIs('intern.attendance.*'))
+                            @if(request()->routeIs('intern.attendance.scan'))
                                 <span class="absolute -top-1 -right-1 w-2 h-2 bg-blue-600 rounded-full"></span>
                             @endif
                         </div>

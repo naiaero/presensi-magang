@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Intern;
 
 use App\Http\Controllers\Controller;
+use App\Models\Attendance;
 use App\Models\Permission;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -67,16 +68,31 @@ class PermissionController extends Controller
         }
 
         // Simpan Data Ke Database
-        Permission::create([
+        $permission = Permission::create([
             'user_id'       => $user->id,
             'date'          => $request->date,
             'reason_option' => $request->reason_option,
             'custom_reason' => $request->reason_option === 'Lainnya' ? $request->custom_reason : null,
             'proof_file'    => $filePath,
-            'status'        => 'Pending',
+            'status'        => 'Approved',
         ]);
 
+        if ($permission->reason_option === 'Terlambat / Di luar Radius Kantor') {
+            $attendance = Attendance::firstOrNew([
+                'user_id' => $permission->user_id,
+                'date'    => $permission->date,
+            ]);
+
+            $attendance->status = 'Hadir';
+
+            if (!$attendance->time_in) {
+                $attendance->time_in = $permission->created_at->timezone('Asia/Makassar')->toTimeString();
+            }
+
+            $attendance->save();
+        }
+
         return redirect()->route('intern.dashboard')
-            ->with('success', 'Pengajuan izin berhasil dikirim. Menunggu verifikasi.');
+            ->with('success', 'Pengajuan izin berhasil dikirim dan otomatis disetujui oleh sistem.');
     }
 }

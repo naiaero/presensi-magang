@@ -40,15 +40,8 @@ class CalendarTest extends TestCase
         $response->assertViewHas('year', '2026');
     }
 
-    public function test_late_permission_approval_creates_hadir_attendance()
+    public function test_permission_submission_is_auto_approved_and_creates_hadir_attendance()
     {
-        $admin = User::create([
-            'name' => 'Admin Test',
-            'email' => 'admin@test.com',
-            'password' => Hash::make('password'),
-            'role' => 'admin',
-        ]);
-
         $user = User::create([
             'name' => 'Intern Test',
             'email' => 'intern2@test.com',
@@ -60,30 +53,23 @@ class CalendarTest extends TestCase
             'duration' => '3 Bulan',
         ]);
 
-        $permission = Permission::create([
-            'user_id' => $user->id,
+        $this->actingAs($user);
+
+        $response = $this->post(route('intern.permission.store'), [
             'date' => '2026-07-28',
             'reason_option' => 'Terlambat / Di luar Radius Kantor',
             'custom_reason' => 'Macet jalanan',
-            'status' => 'Pending',
         ]);
 
-        $this->actingAs($admin);
+        $response->assertRedirect(route('intern.dashboard'));
 
-        // Approve permission
-        $response = $this->post(route('admin.permission.update', $permission->id), [
-            'status' => 'Approved',
-        ]);
+        $permission = Permission::where('user_id', $user->id)
+            ->where('date', '2026-07-28')
+            ->first();
 
-        $response->assertRedirect();
-        
-        // Assert permission status is Approved
-        $this->assertDatabaseHas('permissions', [
-            'id' => $permission->id,
-            'status' => 'Approved',
-        ]);
+        $this->assertNotNull($permission);
+        $this->assertSame('Approved', $permission->status);
 
-        // Assert Attendance record is automatically created with status Hadir
         $this->assertDatabaseHas('attendances', [
             'user_id' => $user->id,
             'date' => '2026-07-28',
