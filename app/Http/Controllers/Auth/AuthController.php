@@ -39,17 +39,6 @@ class AuthController extends Controller
 
                 $user = Auth::user();
                 
-                // Cek apakah akun intern sudah nonaktif (masa magang selesai)
-                if ($user->role === 'intern' && $user->end_date && \Carbon\Carbon::today()->toDateString() > $user->end_date) {
-                    Auth::logout();
-                    $request->session()->invalidate();
-                    $request->session()->regenerateToken();
-                    
-                    return back()->withErrors([
-                        'email' => 'Akun Anda telah dinonaktifkan karena masa magang telah selesai.',
-                    ])->onlyInput('email');
-                }
-
                 if ($user->role === 'admin') {
                     return redirect()->intended(route('admin.dashboard'));
                 }

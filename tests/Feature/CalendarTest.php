@@ -24,7 +24,7 @@ class CalendarTest extends TestCase
             'institution' => 'Universitas Mataram',
             'major' => 'Teknik Informatika',
             'start_date' => '2026-05-01',
-            'duration' => '3 Bulan',
+            'end_date' => '2026-08-01',
             'created_at' => Carbon::parse('2026-05-15 10:00:00'),
             'updated_at' => Carbon::parse('2026-05-15 10:00:00'),
         ]);
@@ -50,7 +50,7 @@ class CalendarTest extends TestCase
             'institution' => 'Universitas Mataram',
             'major' => 'Teknik Informatika',
             'start_date' => '2026-05-01',
-            'duration' => '3 Bulan',
+            'end_date' => '2026-12-31',
         ]);
 
         $this->actingAs($user);

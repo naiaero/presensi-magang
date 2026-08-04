@@ -34,20 +34,29 @@
 <!-- Tab Content: Users -->
 <div id="content-users" class="tab-content block">
     <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-        <div class="p-6 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="p-6 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
                 <h2 class="text-lg font-bold text-slate-800">Daftar User</h2>
                 <p class="text-sm text-slate-500">Kelola data pengguna dan lihat kalender presensi.</p>
             </div>
-            <button onclick="openModal('modalTambahUser')" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-sm font-semibold shadow-md shadow-blue-500/20 transition-all transform hover:-translate-y-0.5">
-                + Tambah Pengguna
-            </button>
+            <div class="flex items-center gap-3 shrink-0">
+                <!-- Search Input Real-time -->
+                <div class="relative w-48 sm:w-64 flex items-center">
+                    <svg class="w-4 h-4 absolute top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none z-10" style="left: 1.125rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                    <input type="text" id="searchUserInput" oninput="filterUserList()" placeholder="Cari nama pengguna" class="w-full h-10 border border-slate-200 bg-slate-50 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all" style="padding-left: 3.125rem !important; padding-right: 1rem !important;">
+                </div>
+                <button onclick="openModal('modalTambahUser')" class="h-10 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs sm:text-sm font-semibold shadow-md shadow-blue-500/20 transition-all flex items-center justify-center shrink-0 whitespace-nowrap">
+                    + Tambah Pengguna
+                </button>
+            </div>
         </div>
         <div class="divide-y divide-slate-100">
             @forelse($users as $user)
-            <div class="p-4 hover:bg-slate-50 transition-colors group flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-50 last:border-0">
+            <div class="user-item p-4 hover:bg-slate-50 transition-colors group flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-50 last:border-0" data-name="{{ strtolower($user->name) }}">
                 <div class="flex items-center gap-4 cursor-pointer flex-1" onclick="openCalendarModal('{{ $user->id }}', '{{ addslashes($user->name) }}', '{{ addslashes($user->institution) }}', '{{ \Carbon\Carbon::parse($user->start_date)->format('d M Y') }}', '{{ \Carbon\Carbon::parse($user->end_date)->format('d M Y') }}', '{{ addslashes($user->major) }}')">
-                    <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold shrink-0">
+                    <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold shrink-0 aspect-square" style="width: 40px; height: 40px; min-width: 40px; min-height: 40px;">
                         {{ strtoupper(substr($user->name, 0, 1)) }}
                     </div>
                     <div>
@@ -63,6 +72,12 @@
                     </div>
                 </div>
                 <div class="flex flex-wrap items-center gap-2 shrink-0 w-full md:w-auto mt-2 md:mt-0">
+                    <a href="{{ route('admin.user.pdf', $user->id) }}" target="_blank" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold transition-colors flex items-center gap-1 shadow-sm">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 01-2-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                        Cetak Riwayat Presensi
+                    </a>
                     <button type="button" onclick="openEditUserModal('{{ $user->id }}', '{{ addslashes($user->name) }}', '{{ addslashes($user->email) }}', '{{ addslashes($user->institution) }}', '{{ addslashes($user->major) }}', '{{ $user->start_date }}', '{{ $user->end_date }}')" class="px-3 py-1.5 bg-slate-100 text-slate-600 hover:bg-blue-50 hover:text-blue-600 rounded-lg text-xs font-semibold transition-colors">Edit</button>
                     <button type="button" onclick="openResetPasswordModal('{{ $user->id }}', '{{ addslashes($user->name) }}')" class="px-3 py-1.5 bg-slate-100 text-slate-600 hover:bg-rose-50 hover:text-rose-600 rounded-lg text-xs font-semibold transition-colors">Reset Password</button>
                     <button type="button" onclick="openCalendarModal('{{ $user->id }}', '{{ addslashes($user->name) }}', '{{ addslashes($user->institution) }}', '{{ \Carbon\Carbon::parse($user->start_date)->format('d M Y') }}', '{{ \Carbon\Carbon::parse($user->end_date)->format('d M Y') }}', '{{ addslashes($user->major) }}')" class="px-3 py-1.5 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1">
@@ -76,6 +91,9 @@
                 <p>Belum ada pengguna terdaftar.</p>
             </div>
             @endforelse
+            <div id="emptySearchUserMsg" class="hidden p-8 text-center text-slate-500">
+                <p class="font-medium">Tidak ada pengguna yang cocok dengan pencarian.</p>
+            </div>
         </div>
     </div>
 </div>
@@ -108,7 +126,7 @@
                             @if($perm->proof_file)
                             <div>
                                 <span class="font-semibold text-slate-700">Lampiran:</span>
-                                <a href="{{ asset('storage/' . $perm->proof_file) }}" target="_blank" class="text-blue-600 hover:text-blue-700 hover:underline inline-flex items-center gap-1 font-medium">
+                                <a href="{{ route('permission.file', basename($perm->proof_file)) }}" target="_blank" class="text-blue-600 hover:text-blue-700 hover:underline inline-flex items-center gap-1 font-medium">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path></svg>
                                     Lihat File Lampiran
                                 </a>
@@ -308,6 +326,32 @@
 
 @push('scripts')
 <script>
+    // Real-time Search User Filter
+    function filterUserList() {
+        const input = document.getElementById('searchUserInput').value.toLowerCase().trim();
+        const items = document.querySelectorAll('.user-item');
+        let hasVisible = false;
+
+        items.forEach(item => {
+            const name = item.getAttribute('data-name') || '';
+            if (name.includes(input)) {
+                item.style.display = '';
+                hasVisible = true;
+            } else {
+                item.style.display = 'none';
+            }
+        });
+
+        const emptySearchMsg = document.getElementById('emptySearchUserMsg');
+        if (emptySearchMsg) {
+            if (!hasVisible && items.length > 0) {
+                emptySearchMsg.classList.remove('hidden');
+            } else {
+                emptySearchMsg.classList.add('hidden');
+            }
+        }
+    }
+
     // Tab Switching Logic
     function switchTab(tabId) {
         document.querySelectorAll('.tab-content').forEach(el => {

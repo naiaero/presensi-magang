@@ -16,7 +16,13 @@ class PermissionController extends Controller
      */
     public function create()
     {
+        $user = Auth::user();
         $today = Carbon::now('Asia/Makassar')->toDateString();
+
+        if ($user->end_date && Carbon::parse($today)->greaterThan(Carbon::parse($user->end_date))) {
+            return redirect()->route('intern.dashboard')
+                ->with('error', 'Masa magang Anda telah selesai pada tanggal ' . Carbon::parse($user->end_date)->translatedFormat('d F Y') . '. Anda tidak dapat lagi mengajukan izin.');
+        }
         
         // Opsi alasan standar yang dapat dipilih anak magang
         $reasonOptions = [
@@ -35,6 +41,14 @@ class PermissionController extends Controller
      */
     public function store(Request $request)
     {
+        $user = Auth::user();
+        $today = Carbon::now('Asia/Makassar')->toDateString();
+
+        if ($user->end_date && Carbon::parse($today)->greaterThan(Carbon::parse($user->end_date))) {
+            return redirect()->route('intern.dashboard')
+                ->with('error', 'Masa magang Anda telah selesai pada tanggal ' . Carbon::parse($user->end_date)->translatedFormat('d F Y') . '. Anda tidak dapat lagi mengajukan izin.');
+        }
+
         // Validasi Input
         $request->validate([
             'date'          => 'required|date',
@@ -46,8 +60,6 @@ class PermissionController extends Controller
             'proof_file.mimes'          => 'Lampiran harus berupa file gambar (JPG, PNG) atau PDF.',
             'proof_file.max'            => 'Ukuran file lampiran maksimal 2 MB.',
         ]);
-
-        $user = Auth::user();
 
         // Cek apakah sudah pernah mengajukan izin di tanggal yang sama
         $existingPermission = Permission::where('user_id', $user->id)
@@ -94,5 +106,40 @@ class PermissionController extends Controller
 
         return redirect()->route('intern.dashboard')
             ->with('success', 'Pengajuan izin berhasil dilakukan.');
+    }
+
+    /**
+     * Tampilkan / download file lampiran bukti izin secara aman
+     */
+    public function showFile($filename)
+    {
+        $cleanFilename = basename($filename);
+
+        $possiblePaths = [
+            storage_path('app/public/permissions/' . $cleanFilename),
+            storage_path('app/public/' . $filename),
+            storage_path('app/permissions/' . $cleanFilename),
+            public_path('storage/permissions/' . $cleanFilename),
+            public_path('storage/' . $filename),
+        ];
+
+        $filePath = null;
+        foreach ($possiblePaths as $path) {
+            if (file_exists($path) && is_file($path)) {
+                $filePath = $path;
+                break;
+            }
+        }
+
+        if (!$filePath) {
+            return redirect()->back()->with('error', 'File lampiran tidak ditemukan pada server.');
+        }
+
+        $mimeType = mime_content_type($filePath) ?: 'application/octet-stream';
+
+        return response()->file($filePath, [
+            'Content-Type' => $mimeType,
+            'Content-Disposition' => 'inline; filename="' . $cleanFilename . '"',
+        ]);
     }
 }

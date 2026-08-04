@@ -37,8 +37,14 @@ Route::middleware(['auth'])->prefix('intern')->name('intern.')->group(function (
     Route::get('/profile', [\App\Http\Controllers\Intern\ProfileController::class, 'index'])->name('profile');
     Route::post('/profile/update-password', [\App\Http\Controllers\Intern\ProfileController::class, 'updatePassword'])->name('profile.update_password');
 
-    // Attendance history
+    // Attendance history & export
     Route::get('/attendance', [AttendanceController::class, 'history'])->name('attendance.index');
+    Route::get('/attendance/pdf', [AttendanceController::class, 'exportPdf'])->name('attendance.pdf');
+});
+
+// SHARED AUTHENTICATED ROUTES
+Route::middleware(['auth'])->group(function () {
+    Route::get('/permission/file/{filename}', [PermissionController::class, 'showFile'])->name('permission.file');
 });
 
 use App\Http\Controllers\Admin\AdminController;
@@ -54,5 +60,6 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
         Route::delete('/user/{id}', [AdminController::class, 'deleteUser'])->name('admin.user.delete');
         Route::post('/permission/{id}', [AdminController::class, 'updatePermission'])->name('admin.permission.update');
         Route::get('/user/{id}/calendar', [AdminController::class, 'getUserCalendar'])->name('admin.user.calendar');
+        Route::get('/user/{id}/pdf', [AdminController::class, 'exportUserPdf'])->name('admin.user.pdf');
     });
 });

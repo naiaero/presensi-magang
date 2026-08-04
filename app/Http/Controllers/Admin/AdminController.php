@@ -15,7 +15,7 @@ class AdminController extends Controller
     public function dashboard()
     {
 
-        $users = User::where('role', 'intern')->get();
+        $users = User::where('role', 'intern')->orderBy('name', 'asc')->get();
         $permissions = Permission::with('user')->orderBy('date', 'desc')->get();
 
         return view('admin.dashboard', compact('users', 'permissions'));
@@ -173,5 +173,25 @@ class AdminController extends Controller
             'userCreatedAt' => Carbon::parse($user->created_at ?? $user->start_date)->toDateString(),
             'monthName' => Carbon::createFromDate($year, $month, 1)->translatedFormat('F Y'),
         ]);
+    }
+
+    /**
+     * Cetak File PDF Riwayat Presensi Peserta Magang oleh Admin
+     */
+    public function exportUserPdf($id)
+    {
+        $user = User::findOrFail($id);
+
+        // Ambil seluruh data presensi user selama magang berlangsung
+        $attendances = Attendance::where('user_id', $user->id)
+            ->orderBy('date', 'asc')
+            ->get();
+
+        $pdf = app('dompdf.wrapper')->loadView('intern.attendance.pdf', compact('user', 'attendances'));
+        $pdf->setPaper('a4', 'portrait');
+
+        $filename = 'Riwayat_Presensi_' . \Illuminate\Support\Str::slug($user->name) . '.pdf';
+
+        return $pdf->stream($filename);
     }
 }

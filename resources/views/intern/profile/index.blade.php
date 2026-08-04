@@ -9,10 +9,10 @@
     <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 text-center relative overflow-hidden">
         <div class="absolute top-0 left-0 right-0 h-20 bg-gradient-to-r from-blue-700 to-indigo-800"></div>
         
-        <div class="relative pt-4">
+        <div class="relative pt-4 flex flex-col items-center">
             <!-- Foto Avatar / Initials -->
-            <div class="w-24 h-24 mx-auto rounded-full bg-white p-1 shadow-lg mb-4">
-                <div class="w-full h-full rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-3xl font-black border border-blue-200">
+            <div class="w-20 h-20 sm:w-24 sm:h-24 mx-auto rounded-full bg-white p-1 shadow-lg mb-4 flex items-center justify-center shrink-0 aspect-square" style="width: 80px; height: 80px; min-width: 80px; min-height: 80px;">
+                <div class="w-full h-full rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-2xl sm:text-3xl font-black border border-blue-200 aspect-square">
                     {{ strtoupper(substr(auth()->user()->name ?? 'M', 0, 1)) }}
                 </div>
             </div>

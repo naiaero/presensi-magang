@@ -7,6 +7,7 @@ use App\Models\Attendance;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class AttendanceController extends Controller
 {
@@ -223,7 +224,15 @@ class AttendanceController extends Controller
      */
     public function storeOut(Request $request)
     {
+        $user = Auth::user();
         $now = Carbon::now('Asia/Makassar');
+        $today = $now->toDateString();
+
+        if ($user->end_date && Carbon::parse($today)->greaterThan(Carbon::parse($user->end_date))) {
+            return redirect()->route('intern.dashboard')
+                ->with('error', 'Masa magang Anda telah selesai pada tanggal ' . Carbon::parse($user->end_date)->translatedFormat('d F Y') . '. Anda tidak dapat lagi melakukan presensi.');
+        }
+
         $currentTime = $now->toTimeString();
         $isFriday = $now->isFriday();
         $limitTime = $isFriday ? '17:00:00' : '16:00:00';
@@ -241,15 +250,6 @@ class AttendanceController extends Controller
         $request->validate($rules, [
             'early_leave_reason.required' => 'Karena Anda pulang sebelum pukul ' . substr($limitTime, 0, 5) . ' WITA, mohon isi alasan Anda.',
         ]);
-
-        $user = Auth::user();
-        $now = Carbon::now('Asia/Makassar');
-        $today = $now->toDateString();
-
-        if ($user->end_date && Carbon::parse($today)->greaterThan(Carbon::parse($user->end_date))) {
-            return redirect()->route('intern.dashboard')
-                ->with('error', 'Masa magang Anda telah selesai pada tanggal ' . Carbon::parse($user->end_date)->translatedFormat('d F Y') . '. Anda tidak dapat lagi melakukan presensi.');
-        }
 
         $currentTime = $now->toTimeString();
 
@@ -299,5 +299,25 @@ class AttendanceController extends Controller
                  cos($latFrom) * cos($latTo) * pow(sin($lonDelta / 2), 2)));
 
         return $earthRadius * $angle;
+    }
+
+    /**
+     * Cetak File PDF Riwayat Presensi Magang
+     */
+    public function exportPdf()
+    {
+        $user = Auth::user();
+
+        // Ambil seluruh data presensi user selama magang berlangsung
+        $attendances = Attendance::where('user_id', $user->id)
+            ->orderBy('date', 'asc')
+            ->get();
+
+        $pdf = app('dompdf.wrapper')->loadView('intern.attendance.pdf', compact('user', 'attendances'));
+        $pdf->setPaper('a4', 'portrait');
+
+        $filename = 'Riwayat_Presensi_' . \Illuminate\Support\Str::slug($user->name) . '.pdf';
+
+        return $pdf->stream($filename);
     }
 }
