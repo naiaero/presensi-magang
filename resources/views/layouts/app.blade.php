@@ -27,9 +27,7 @@
     <aside class="hidden md:flex flex-col w-64 lg:w-72 bg-white border-r border-slate-200 h-screen sticky top-0 shadow-lg z-40">
         <!-- Logo -->
         <div class="p-6 border-b border-slate-100 flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white font-bold text-xl shadow-md">
-                B
-            </div>
+            <img src="{{ asset('images/Logo.png') }}" alt="Logo Bapenda NTB" class="w-10 h-10 rounded-xl object-contain bg-white border border-slate-200 shadow-sm">
             <div>
                 <h1 class="text-sm font-bold text-slate-800 leading-tight">Bapenda NTB</h1>
                 <p class="text-[10px] text-slate-500 uppercase tracking-wider font-semibold">Presensi Magang</p>

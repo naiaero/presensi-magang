@@ -29,6 +29,19 @@
             background-size: 400% 400%;
             animation: gradientBG 15s ease infinite;
         }
+        .logo-frame {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 110px;
+            height: 110px;
+            margin: 0 auto 1rem;
+        }
+        .logo-image {
+            max-width: 150%;
+            max-height: 150%;
+            object-fit: contain;
+        }
         .dark .animated-bg {
             background: linear-gradient(-45deg, #020617, #0f172a, #1e3a8a, #172554);
             background-size: 400% 400%;
@@ -46,6 +59,9 @@
     <div class="w-full max-w-md relative z-10">
         <div class="glass-panel rounded-3xl p-8 relative overflow-hidden shadow-2xl shadow-blue-900/40">
             <div class="text-center mb-8">
+                <div class="logo-frame">
+                    <img src="{{ asset('images/Logo.png') }}" alt="Logo Presensi" class="logo-image">
+                </div>
                 <h2 class="text-2xl font-bold text-white">Login</h2>
                 <p class="text-blue-200 text-sm mt-2">Presensi Magang Bapenda NTB</p>
             </div>

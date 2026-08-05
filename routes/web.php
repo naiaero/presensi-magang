@@ -6,9 +6,9 @@ use App\Http\Controllers\Intern\AttendanceController;
 use App\Http\Controllers\Intern\PermissionController;
 use App\Http\Controllers\Auth\AuthController;
 
-// Root redirect
+// Root route: open login directly from the base URL
 Route::get('/', function () {
-    return redirect()->route('login');
+    return view('auth.login');
 });
 
 // INTERN AUTH (Laravel Auth)
