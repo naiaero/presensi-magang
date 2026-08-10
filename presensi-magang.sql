@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.1
+-- version 5.2.3
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1:3307
--- Generation Time: Aug 05, 2026 at 05:50 AM
--- Server version: 10.4.32-MariaDB
--- PHP Version: 8.2.12
+-- Host: localhost:3308
+-- Generation Time: Aug 10, 2026 at 01:51 AM
+-- Server version: 8.4.3
+-- PHP Version: 8.3.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -28,17 +28,17 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `attendances` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `user_id` bigint(20) UNSIGNED NOT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `user_id` bigint UNSIGNED NOT NULL,
   `date` date NOT NULL,
   `time_in` time DEFAULT NULL,
   `time_out` time DEFAULT NULL,
-  `latitude_in` varchar(255) DEFAULT NULL,
-  `longitude_in` varchar(255) DEFAULT NULL,
-  `latitude_out` varchar(255) DEFAULT NULL,
-  `longitude_out` varchar(255) DEFAULT NULL,
-  `early_leave_reason` text DEFAULT NULL,
-  `status` varchar(255) NOT NULL DEFAULT 'Hadir',
+  `latitude_in` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `longitude_in` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `latitude_out` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `longitude_out` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `early_leave_reason` text COLLATE utf8mb4_unicode_ci,
+  `status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'Hadir',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -51,7 +51,8 @@ INSERT INTO `attendances` (`id`, `user_id`, `date`, `time_in`, `time_out`, `lati
 (1, 3, '2026-07-31', '10:59:15', NULL, NULL, NULL, NULL, NULL, NULL, 'Hadir', '2026-07-30 18:59:42', '2026-07-30 18:59:42'),
 (2, 3, '2026-08-03', '08:12:32', NULL, NULL, NULL, NULL, NULL, NULL, 'Hadir', '2026-08-02 16:12:32', '2026-08-02 16:12:32'),
 (3, 3, '2026-08-04', '08:10:00', NULL, NULL, NULL, NULL, NULL, NULL, 'Hadir', '2026-08-03 16:10:00', '2026-08-03 16:10:00'),
-(4, 3, '2026-08-08', '10:08:54', '10:09:09', NULL, NULL, '-8.592368239128307', '116.0968307692122', 'bebas', 'Hadir', '2026-08-07 18:08:54', '2026-08-07 18:09:09');
+(4, 3, '2026-08-08', '10:08:54', '10:09:09', NULL, NULL, '-8.592368239128307', '116.0968307692122', 'bebas', 'Hadir', '2026-08-07 18:08:54', '2026-08-07 18:09:09'),
+(5, 2, '2026-08-10', '09:49:05', NULL, NULL, NULL, NULL, NULL, NULL, 'Hadir', '2026-08-09 17:49:05', '2026-08-09 17:49:05');
 
 -- --------------------------------------------------------
 
@@ -60,9 +61,9 @@ INSERT INTO `attendances` (`id`, `user_id`, `date`, `time_in`, `time_out`, `lati
 --
 
 CREATE TABLE `cache` (
-  `key` varchar(255) NOT NULL,
-  `value` mediumtext NOT NULL,
-  `expiration` int(11) NOT NULL
+  `key` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `value` mediumtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `expiration` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -72,9 +73,9 @@ CREATE TABLE `cache` (
 --
 
 CREATE TABLE `cache_locks` (
-  `key` varchar(255) NOT NULL,
-  `owner` varchar(255) NOT NULL,
-  `expiration` int(11) NOT NULL
+  `key` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `owner` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `expiration` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -84,13 +85,13 @@ CREATE TABLE `cache_locks` (
 --
 
 CREATE TABLE `failed_jobs` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `uuid` varchar(255) NOT NULL,
-  `connection` text NOT NULL,
-  `queue` text NOT NULL,
-  `payload` longtext NOT NULL,
-  `exception` longtext NOT NULL,
-  `failed_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `id` bigint UNSIGNED NOT NULL,
+  `uuid` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `connection` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `queue` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `payload` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `exception` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `failed_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -100,11 +101,11 @@ CREATE TABLE `failed_jobs` (
 --
 
 CREATE TABLE `izin_magangs` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `magang_id` bigint(20) UNSIGNED NOT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `magang_id` bigint UNSIGNED NOT NULL,
   `tanggal_izin` date NOT NULL,
-  `alasan` text NOT NULL,
-  `status` varchar(255) NOT NULL DEFAULT 'pending',
+  `alasan` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'pending',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -116,13 +117,13 @@ CREATE TABLE `izin_magangs` (
 --
 
 CREATE TABLE `jobs` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `queue` varchar(255) NOT NULL,
-  `payload` longtext NOT NULL,
-  `attempts` tinyint(3) UNSIGNED NOT NULL,
-  `reserved_at` int(10) UNSIGNED DEFAULT NULL,
-  `available_at` int(10) UNSIGNED NOT NULL,
-  `created_at` int(10) UNSIGNED NOT NULL
+  `id` bigint UNSIGNED NOT NULL,
+  `queue` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `payload` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `attempts` tinyint UNSIGNED NOT NULL,
+  `reserved_at` int UNSIGNED DEFAULT NULL,
+  `available_at` int UNSIGNED NOT NULL,
+  `created_at` int UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -132,16 +133,16 @@ CREATE TABLE `jobs` (
 --
 
 CREATE TABLE `job_batches` (
-  `id` varchar(255) NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `total_jobs` int(11) NOT NULL,
-  `pending_jobs` int(11) NOT NULL,
-  `failed_jobs` int(11) NOT NULL,
-  `failed_job_ids` longtext NOT NULL,
-  `options` mediumtext DEFAULT NULL,
-  `cancelled_at` int(11) DEFAULT NULL,
-  `created_at` int(11) NOT NULL,
-  `finished_at` int(11) DEFAULT NULL
+  `id` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `total_jobs` int NOT NULL,
+  `pending_jobs` int NOT NULL,
+  `failed_jobs` int NOT NULL,
+  `failed_job_ids` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `options` mediumtext COLLATE utf8mb4_unicode_ci,
+  `cancelled_at` int DEFAULT NULL,
+  `created_at` int NOT NULL,
+  `finished_at` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -151,11 +152,11 @@ CREATE TABLE `job_batches` (
 --
 
 CREATE TABLE `magangs` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `nama` varchar(255) NOT NULL,
-  `asal_instansi` varchar(255) NOT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `nama` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `asal_instansi` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `tanggal_masuk` date NOT NULL,
-  `durasi_kerja` varchar(255) NOT NULL,
+  `durasi_kerja` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -167,9 +168,9 @@ CREATE TABLE `magangs` (
 --
 
 CREATE TABLE `migrations` (
-  `id` int(10) UNSIGNED NOT NULL,
-  `migration` varchar(255) NOT NULL,
-  `batch` int(11) NOT NULL
+  `id` int UNSIGNED NOT NULL,
+  `migration` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `batch` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -198,8 +199,8 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 --
 
 CREATE TABLE `password_reset_tokens` (
-  `email` varchar(255) NOT NULL,
-  `token` varchar(255) NOT NULL,
+  `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `token` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -210,13 +211,13 @@ CREATE TABLE `password_reset_tokens` (
 --
 
 CREATE TABLE `permissions` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `user_id` bigint(20) UNSIGNED NOT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `user_id` bigint UNSIGNED NOT NULL,
   `date` date NOT NULL,
-  `reason_option` varchar(255) NOT NULL,
-  `custom_reason` text DEFAULT NULL,
-  `proof_file` varchar(255) DEFAULT NULL,
-  `status` varchar(255) NOT NULL DEFAULT 'Pending',
+  `reason_option` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `custom_reason` text COLLATE utf8mb4_unicode_ci,
+  `proof_file` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'Pending',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -227,17 +228,16 @@ CREATE TABLE `permissions` (
 
 INSERT INTO `permissions` (`id`, `user_id`, `date`, `reason_option`, `custom_reason`, `proof_file`, `status`, `created_at`, `updated_at`) VALUES
 (1, 3, '2026-07-29', 'Urusan Kampus / Sekolah', NULL, NULL, 'Approved', '2026-07-28 22:07:26', '2026-07-28 22:08:44'),
-(2, 5, '2026-07-30', 'Keperluan Keluarga / Acara Penting', NULL, NULL, 'Approved', '2026-07-29 16:00:12', '2026-07-29 16:01:11'),
 (3, 3, '2026-07-31', 'Terlambat / Di luar Radius Kantor', NULL, NULL, 'Approved', '2026-07-30 18:59:15', '2026-07-30 18:59:42'),
 (4, 3, '2026-08-01', 'Keperluan Keluarga / Acara Penting', NULL, NULL, 'Approved', '2026-07-30 23:37:12', '2026-07-30 23:37:12'),
 (5, 3, '2026-08-02', 'Urusan Kampus / Sekolah', NULL, 'permissions/1785485954_3.pdf', 'Approved', '2026-07-31 00:19:14', '2026-07-31 00:19:14'),
-(6, 5, '2026-07-31', 'Keperluan Keluarga / Acara Penting', NULL, 'permissions/1785486269_5.jpeg', 'Approved', '2026-07-31 00:24:29', '2026-07-31 00:24:29'),
 (7, 3, '2026-08-03', 'Terlambat / Di luar Radius Kantor', NULL, NULL, 'Approved', '2026-08-02 16:12:32', '2026-08-02 16:12:32'),
 (8, 3, '2026-08-05', 'Sakit', NULL, 'permissions/1785889240_3.jpeg', 'Approved', '2026-08-04 16:20:40', '2026-08-04 16:20:40'),
 (9, 3, '2026-08-06', 'Keperluan Keluarga / Acara Penting', NULL, NULL, 'Approved', '2026-08-04 16:21:29', '2026-08-04 16:21:29'),
 (10, 3, '2026-08-28', 'Keperluan Keluarga / Acara Penting', NULL, NULL, 'Approved', '2026-08-04 16:23:13', '2026-08-04 16:23:13'),
 (11, 3, '2026-08-04', 'Terlambat / Di luar Radius Kantor', NULL, NULL, 'Approved', '2026-08-03 16:10:00', '2026-08-03 16:10:00'),
-(12, 3, '2026-08-08', 'Terlambat / Di luar Radius Kantor', NULL, NULL, 'Approved', '2026-08-07 18:08:54', '2026-08-07 18:08:54');
+(12, 3, '2026-08-08', 'Terlambat / Di luar Radius Kantor', NULL, NULL, 'Approved', '2026-08-07 18:08:54', '2026-08-07 18:08:54'),
+(13, 2, '2026-08-10', 'Terlambat / Di luar Radius Kantor', NULL, NULL, 'Approved', '2026-08-09 17:49:05', '2026-08-09 17:49:05');
 
 -- --------------------------------------------------------
 
@@ -246,12 +246,12 @@ INSERT INTO `permissions` (`id`, `user_id`, `date`, `reason_option`, `custom_rea
 --
 
 CREATE TABLE `sessions` (
-  `id` varchar(255) NOT NULL,
-  `user_id` bigint(20) UNSIGNED DEFAULT NULL,
-  `ip_address` varchar(45) DEFAULT NULL,
-  `user_agent` text DEFAULT NULL,
-  `payload` longtext NOT NULL,
-  `last_activity` int(11) NOT NULL
+  `id` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `user_id` bigint UNSIGNED DEFAULT NULL,
+  `ip_address` varchar(45) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `user_agent` text COLLATE utf8mb4_unicode_ci,
+  `payload` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `last_activity` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -259,18 +259,10 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('73UWuwlkF4HlcQ6l6pYbKTDWwlpByXN18iHWqSOG', NULL, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiclNycDE5ZmFoWDdTR01SakFWOGJsb2RWQlY4M3pVN0VRWGVoYm5mOSI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NDU6Imh0dHA6Ly9sb2NhbGhvc3QvcHJlc2Vuc2ktbWFnYW5nL3B1YmxpYy9sb2dpbiI7czo1OiJyb3V0ZSI7czo1OiJsb2dpbiI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', 1785897980),
-('7rtH0u9eT2ZNSCcTuOZLGS5eBB38YiAnPmJLire0', NULL, '10.10.1.8', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Mobile Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiMWxkTDdKbHVQTkhveDBDYUpDR1Rnd3h1RmJMNzcwaWJ6aXcxTkxyMSI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NDY6Imh0dHA6Ly8xMC4xMC4xLjYyL3ByZXNlbnNpLW1hZ2FuZy9wdWJsaWMvbG9naW4iO3M6NToicm91dGUiO3M6NToibG9naW4iO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1785898698),
-('8x3p10DQtTLorYgER9JRyRvgQDRgEnZglS2FQKJu', 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiZHU3OXp3a2x2OHBlSHE3bTVkdkVXNU5BVm5ZUVJseGhOYzJKQXRuVyI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NDU6Imh0dHA6Ly9sb2NhbGhvc3QvcHJlc2Vuc2ktbWFnYW5nL3B1YmxpYy9sb2dpbiI7czo1OiJyb3V0ZSI7czo1OiJsb2dpbiI7fXM6NTA6ImxvZ2luX3dlYl81OWJhMzZhZGRjMmIyZjk0MDE1ODBmMDE0YzdmNThlYTRlMzA5ODlkIjtpOjE7fQ==', 1785893227),
-('aLsNFQ8SbxVIUi0dWaPwb0KXCA9mBfxovRPry1yy', NULL, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiSENuaXVaTnh6c3BYVUZCeEVQU0xvZUk4cGtIeTRWYkx3SjU2VXFqSiI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NDU6Imh0dHA6Ly9sb2NhbGhvc3QvcHJlc2Vuc2ktbWFnYW5nL3B1YmxpYy9sb2dpbiI7czo1OiJyb3V0ZSI7czo1OiJsb2dpbiI7fX0=', 1785897932),
-('CZEnIvW6J91CTmtAgBNYss50A07jrL5foYYhRwrH', 3, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 'YTo1OntzOjY6Il90b2tlbiI7czo0MDoiOGNuaWV6MEdQQjE3TFlXdGNyRmdmNHB0Q2lodWcyMWpCQXUzNk41dyI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NTY6Imh0dHA6Ly9sb2NhbGhvc3QvcHJlc2Vuc2ktbWFnYW5nL3B1YmxpYy9pbnRlcm4vZGFzaGJvYXJkIjtzOjU6InJvdXRlIjtzOjE2OiJpbnRlcm4uZGFzaGJvYXJkIjt9czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6MztzOjIyOiJwZXJtaXNzaW9uX3RvYXN0X3Nob3duIjtiOjE7fQ==', 1785898489),
-('dzmglp2mtwbRGftL66dmDwc2yH6CDf3E6V1ABVCx', NULL, '::1', 'Mozilla/5.0 (Windows NT; Windows NT 10.0; en-US) WindowsPowerShell/5.1.26100.8875', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiZTcyMUppYXR2UzY5WWZoQkdtalFvb3QyNFV1c0s2azBxclRhbzNqWSI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NDk6Imh0dHA6Ly9sb2NhbGhvc3QvcHJlc2Vuc2ktbWFnYW5nL3B1YmxpYy9pbmRleC5waHAiO3M6NToicm91dGUiO047fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', 1785899191),
-('IkXTDRVBexh2a3vaaSTFy3KUbQcmMVi5EZ0VPYxs', NULL, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiakJEQjZsT1h6VFFyY3dYajlQUmNoZEtYNUtCVFBlb21BcWZmUGFCVSI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6Mzk6Imh0dHA6Ly9sb2NhbGhvc3QvcHJlc2Vuc2ktbWFnYW5nL3B1YmxpYyI7czo1OiJyb3V0ZSI7Tjt9fQ==', 1785901784),
-('Jn0nOJouqWjhlmhyAKL8FYFXtpV4Sq3ecmHMmVpF', NULL, '::1', 'Mozilla/5.0 (Windows NT; Windows NT 10.0; en-US) WindowsPowerShell/5.1.26100.8875', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiNThsS1JTd1E5VDBaN29YbUhZZFdUQ2M1VTIxSkdkeTBwdUcwU3R4ViI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NDk6Imh0dHA6Ly9sb2NhbGhvc3QvcHJlc2Vuc2ktbWFnYW5nL3B1YmxpYy9pbmRleC5waHAiO3M6NToicm91dGUiO047fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', 1785899190),
-('jr9rveal0Rhjkuimdcd1hiLEfZoQHrWMm9ADiGxW', 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiUG5lbzV5VVByQkl3azZuc0M5UURiZTBoa3hjR08wVFFHYmdBMVBnYSI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NDU6Imh0dHA6Ly9sb2NhbGhvc3QvcHJlc2Vuc2ktbWFnYW5nL3B1YmxpYy9sb2dpbiI7czo1OiJyb3V0ZSI7czo1OiJsb2dpbiI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fXM6NTA6ImxvZ2luX3dlYl81OWJhMzZhZGRjMmIyZjk0MDE1ODBmMDE0YzdmNThlYTRlMzA5ODlkIjtpOjE7fQ==', 1785893121),
-('lO5phWhc0W171ZFcDGSIboM9MAkieK2nyNdEQUkt', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiZ3BDWno1VGZkR2ZKa3NVQUF2TzJBc2lucTBEaVNmWUU3WndnVzZobiI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MjE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMCI7czo1OiJyb3V0ZSI7Tjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1785900069),
-('ypqroB8XmfBg3edvsgudC6mjGrPBDsR61fRrUeCd', NULL, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiZWFNMVlqZXkwbWxxMXdMQ3lKd04yV09KWVJqNG5Edm5aSVIyTE50byI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NDU6Imh0dHA6Ly9sb2NhbGhvc3QvcHJlc2Vuc2ktbWFnYW5nL3B1YmxpYy9sb2dpbiI7czo1OiJyb3V0ZSI7czo1OiJsb2dpbiI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', 1785898164),
-('ZrtUKNdnObLIRx51jP8XyqavZrggcCRAUPn0einU', NULL, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiSWhFZUJNMTVFTml6U2IzaGtHQWJkb01HQlJ0dTczUVJYbEo3eWwzcSI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NDU6Imh0dHA6Ly9sb2NhbGhvc3QvcHJlc2Vuc2ktbWFnYW5nL3B1YmxpYy9sb2dpbiI7czo1OiJyb3V0ZSI7czo1OiJsb2dpbiI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', 1786154704);
+('JugEIOuiPRe95YzaYt6xulNLnGRcz5pLjHRaZ4K5', 3, '10.10.0.1', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Mobile Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiQnRvM2xrM05JbWVXTEpjQ3dSbnFiMTlUdDJMV0FrSVZNVFdKWEJaUiI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NjQ6Imh0dHA6Ly8xMC4xMC4xLjE0Mi9wcmVzZW5zaS1tYWdhbmcvcHVibGljL2ludGVybi9hdHRlbmRhbmNlL3NjYW4iO3M6NToicm91dGUiO3M6MjI6ImludGVybi5hdHRlbmRhbmNlLnNjYW4iO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX1zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aTozO30=', 1786326477),
+('kAAy9ZOcDcQq393KGKNX5rUx9ekK5Qap4qaFqmPP', 2, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'YTo1OntzOjY6Il90b2tlbiI7czo0MDoiUENtaFBoSE1RMWhDZUJlN0ZqZU5DVzkzN25EVmd0SFU1Nmt0V0hVaSI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NTY6Imh0dHA6Ly9sb2NhbGhvc3QvcHJlc2Vuc2ktbWFnYW5nL3B1YmxpYy9pbnRlcm4vZGFzaGJvYXJkIjtzOjU6InJvdXRlIjtzOjE2OiJpbnRlcm4uZGFzaGJvYXJkIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6MjtzOjIyOiJwZXJtaXNzaW9uX3RvYXN0X3Nob3duIjtiOjE7fQ==', 1786326545),
+('QIDel9KS9OVtB5o9v65dZfPWINbBCwKTqElrUKqR', 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiaVo4ZjhMQzRodTg2b0w2WHJTd0dFbWJrdDI1MExpSzFRTUgzZTlvSCI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NTU6Imh0dHA6Ly9sb2NhbGhvc3QvcHJlc2Vuc2ktbWFnYW5nL3B1YmxpYy9hZG1pbi9kYXNoYm9hcmQiO3M6NToicm91dGUiO3M6MTU6ImFkbWluLmRhc2hib2FyZCI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fXM6NTA6ImxvZ2luX3dlYl81OWJhMzZhZGRjMmIyZjk0MDE1ODBmMDE0YzdmNThlYTRlMzA5ODlkIjtpOjE7fQ==', 1786326313),
+('VqVFaeA5p84DvHEVOl7tiA5PDLRarUKlRqB3UH3V', 3, '10.10.1.143', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiSzNjRnFjR2tFR21uQ2g2WmZLNUJERXNCSzFKVjdFUEdYVE9yWWNhaSI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NjQ6Imh0dHA6Ly8xMC4xMC4xLjE0Mi9wcmVzZW5zaS1tYWdhbmcvcHVibGljL2ludGVybi9hdHRlbmRhbmNlL3NjYW4iO3M6NToicm91dGUiO3M6MjI6ImludGVybi5hdHRlbmRhbmNlLnNjYW4iO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX1zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aTozO30=', 1786326295);
 
 -- --------------------------------------------------------
 
@@ -279,18 +271,19 @@ INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, 
 --
 
 CREATE TABLE `users` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `email` varchar(255) NOT NULL,
-  `institution` varchar(255) DEFAULT NULL,
-  `major` varchar(255) DEFAULT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `institution` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `major` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `phone_number` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `start_date` date DEFAULT NULL,
   `end_date` date DEFAULT NULL,
-  `duration` varchar(255) DEFAULT NULL,
+  `duration` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `email_verified_at` timestamp NULL DEFAULT NULL,
-  `password` varchar(255) NOT NULL,
-  `role` varchar(255) NOT NULL DEFAULT 'intern',
-  `remember_token` varchar(100) DEFAULT NULL,
+  `password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `role` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'intern',
+  `remember_token` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -299,15 +292,10 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `name`, `email`, `institution`, `major`, `start_date`, `end_date`, `duration`, `email_verified_at`, `password`, `role`, `remember_token`, `created_at`, `updated_at`) VALUES
-(1, 'Administrator', 'admin@admin.com', NULL, NULL, NULL, NULL, NULL, NULL, '$2y$12$kgpOXAYxxeDhnIH4vAtTPOw55hQT/fASjhk9CVaOTYAVprnkxtSfq', 'admin', NULL, '2026-07-28 21:37:02', '2026-07-28 21:37:02'),
-(2, 'Salsabila Nailafahdi', 'intern@bapenda.ntb.go.id', 'Universitas Mataram', NULL, NULL, NULL, NULL, NULL, '$2y$12$yIxhs.g1pXn6O6FGjGYfauZBWoDuS48IMMIomSeL6f4VteUejpOhm', 'intern', NULL, '2026-07-28 21:37:02', '2026-07-28 21:37:02'),
-(3, 'Sagos', 'Sagos@gmail.com', 'Universitas Mataram', 'Teknik Informatika', '2026-07-29', '2026-09-05', '1 bulan', NULL, '$2y$12$pYwlbNw5NuUEmAYbDaFIHeojCzIZh70fNlor4K9mbrzqbncLpRv..', 'intern', NULL, '2026-07-28 22:06:26', '2026-08-03 22:46:08'),
-(4, 'Budi', 'budi@gmail.com', 'Universitas Mataram', NULL, '2026-07-29', NULL, '2 bulan', NULL, '$2y$12$qWgv9CZApbZ2ZaJTSYcnbOrQkiZ5kegD2/GLaH1oO1sjfMMn2MP.W', 'intern', NULL, '2026-07-28 22:13:35', '2026-07-28 22:13:35'),
-(5, 'user', 'user@gmail.com', 'Universitas Mataram', 'Teknik Mesin', '2026-07-29', '2026-08-26', '1 bulan', NULL, '$2y$12$d/k5Y8dX9bVJQh0.oDW0/ucox4qas5HQyj7SZOr26eEjfXLwCkIBC', 'intern', NULL, '2026-07-28 23:13:09', '2026-08-03 16:09:22'),
-(7, 'Gaza Bulbul', 'gazabul@gmail.com', 'Universitas Mataram', 'Teknik Informatika', '2026-07-30', NULL, '1 Bulan', NULL, '$2y$12$tQ3qGBaIQuv8GQuRQ1rDbOPKTjQwB7.Z3sFfSparevFUdFEtJ5nGq', 'intern', NULL, '2026-07-29 16:41:46', '2026-07-31 00:46:11'),
-(8, 'tes', 'tes@gmail.com', 'Unram', 'Kimia', '2026-08-03', '2026-08-31', NULL, NULL, '$2y$12$dqABggyklUUhnbPFs8vwG.HsDBmRXTOfrHDVa5/exhX0DeWtWdSy.', 'intern', NULL, '2026-08-02 15:57:50', '2026-08-04 16:17:24'),
-(9, 'Meja', 'meja@gmail.com', 'unram', 'infor', '2026-08-04', '2026-08-05', NULL, NULL, '$2y$12$ewUsgYcLdGL9lo9vjsIwhuh.ohaA/JL117F53pDnA/5ASEHvq.0xm', 'intern', NULL, '2026-08-03 18:03:56', '2026-08-03 18:03:56');
+INSERT INTO `users` (`id`, `name`, `email`, `institution`, `major`, `phone_number`, `start_date`, `end_date`, `duration`, `email_verified_at`, `password`, `role`, `remember_token`, `created_at`, `updated_at`) VALUES
+(1, 'Administrator', 'admin@admin.com', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '$2y$12$kgpOXAYxxeDhnIH4vAtTPOw55hQT/fASjhk9CVaOTYAVprnkxtSfq', 'admin', NULL, '2026-07-28 21:37:02', '2026-07-28 21:37:02'),
+(2, 'Salsabila Nailafahdi', 'naila@gmail.com', 'Universitas Mataram', 'Teknik Informatika', '', '2026-07-20', '2026-08-21', NULL, NULL, '$2y$12$yIxhs.g1pXn6O6FGjGYfauZBWoDuS48IMMIomSeL6f4VteUejpOhm', 'intern', NULL, '2026-07-28 21:37:02', '2026-07-28 21:37:02'),
+(3, 'M. Sagos', 'sagos@gmail.com', 'Universitas Mataram', 'Teknik Informatika', NULL, '2026-07-20', '2026-08-21', '1 bulan', NULL, '$2y$12$pYwlbNw5NuUEmAYbDaFIHeojCzIZh70fNlor4K9mbrzqbncLpRv..', 'intern', NULL, '2026-07-28 22:06:26', '2026-07-28 22:06:26');
 
 --
 -- Indexes for dumped tables
@@ -409,49 +397,49 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `attendances`
 --
 ALTER TABLE `attendances`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `failed_jobs`
 --
 ALTER TABLE `failed_jobs`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `izin_magangs`
 --
 ALTER TABLE `izin_magangs`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `jobs`
 --
 ALTER TABLE `jobs`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `magangs`
 --
 ALTER TABLE `magangs`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `permissions`
 --
 ALTER TABLE `permissions`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- Constraints for dumped tables
