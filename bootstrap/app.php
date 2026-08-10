@@ -11,7 +11,13 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        $middleware->redirectGuestsTo('/login');
+        $middleware->redirectUsersTo(function () {
+            if (\Illuminate\Support\Facades\Auth::check() && \Illuminate\Support\Facades\Auth::user()->role === 'admin') {
+                return route('admin.dashboard');
+            }
+            return route('intern.dashboard');
+        });
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

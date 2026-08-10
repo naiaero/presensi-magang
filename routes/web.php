@@ -6,9 +6,16 @@ use App\Http\Controllers\Intern\AttendanceController;
 use App\Http\Controllers\Intern\PermissionController;
 use App\Http\Controllers\Auth\AuthController;
 
-// Root route: open login directly from the base URL
+use Illuminate\Support\Facades\Auth;
+
+// Root route: redirect to dashboard if authenticated, otherwise to login
 Route::get('/', function () {
-    return view('auth.login');
+    if (Auth::check()) {
+        return Auth::user()->role === 'admin'
+            ? redirect()->route('admin.dashboard')
+            : redirect()->route('intern.dashboard');
+    }
+    return redirect()->route('login');
 });
 
 // INTERN AUTH (Laravel Auth)

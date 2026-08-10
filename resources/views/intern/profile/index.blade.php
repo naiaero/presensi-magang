@@ -143,7 +143,7 @@
 
     <!-- Tombol Logout -->
     <div class="pt-2">
-        <form action="{{ route('logout') }}" method="POST">
+        <form action="{{ route('logout') }}" method="POST" onsubmit="sessionStorage.removeItem('session_active');">
             @csrf
             <button type="submit" 
                     class="w-full py-3.5 bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold rounded-2xl border border-rose-200/80 text-sm flex items-center justify-center gap-2 transition-colors">

@@ -10,6 +10,12 @@ class AuthController extends Controller
 {
     public function showLogin()
     {
+        if (Auth::check()) {
+            return Auth::user()->role === 'admin'
+                ? redirect()->route('admin.dashboard')
+                : redirect()->route('intern.dashboard');
+        }
+
         return view('auth.login');
     }
 
@@ -34,16 +40,21 @@ class AuthController extends Controller
         }
 
         foreach ($attempts as $credentials) {
-            if (Auth::attempt($credentials, $request->boolean('remember'))) {
+            if (Auth::attempt($credentials, false)) {
                 $request->session()->regenerate();
 
                 $user = Auth::user();
-                
-                if ($user->role === 'admin') {
-                    return redirect()->intended(route('admin.dashboard'));
+                $targetRoute = ($user->role === 'admin')
+                    ? route('admin.dashboard')
+                    : route('intern.dashboard');
+
+                // Clear any stored intended URL pointing to root or login to prevent redirect loop
+                $intended = session()->get('url.intended');
+                if ($intended && in_array(rtrim($intended, '/'), [url('/'), route('login'), url('/login')])) {
+                    session()->forget('url.intended');
                 }
 
-                return redirect()->intended(route('intern.dashboard'));
+                return redirect()->intended($targetRoute);
             }
         }
 
@@ -58,6 +69,6 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        return redirect()->route('login');
     }
 }

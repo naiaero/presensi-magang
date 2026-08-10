@@ -66,7 +66,7 @@
                 <p class="text-blue-200 text-sm mt-2">Presensi Magang Bapenda NTB</p>
             </div>
 
-            <form method="POST" action="{{ route('login') }}" class="space-y-4">
+            <form method="POST" action="{{ route('login') }}" class="space-y-4" onsubmit="sessionStorage.setItem('session_active', '1');">
                 @csrf
 
                 <div>
@@ -82,13 +82,6 @@
                     <label for="password" class="block text-sm font-semibold text-blue-100 mb-2">Password</label>
                     <input id="password" type="password" name="password" required autocomplete="current-password"
                         class="w-full px-4 py-2.5 bg-white/10 border border-white/20 rounded-lg text-white placeholder-blue-200/50 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent transition-all backdrop-blur-sm">
-                </div>
-
-                <div class="flex items-center pt-1">
-                    <label class="flex items-center gap-2 cursor-pointer">
-                        <input type="checkbox" name="remember" class="w-4 h-4 rounded bg-white/10 border-white/20 text-cyan-500 focus:ring-cyan-500 focus:ring-offset-0 cursor-pointer">
-                        <span class="text-sm text-blue-200">Ingat saya</span>
-                    </label>
                 </div>
 
                 <button type="submit" class="w-full py-2.5 mt-4 bg-white text-blue-700 font-semibold rounded-lg shadow-lg hover:shadow-xl hover:bg-blue-50 transition-all">
