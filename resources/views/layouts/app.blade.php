@@ -6,6 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>@yield('title', 'Presensi Magang - Bapenda NTB')</title>
+    <link rel="icon" href= "{{asset('images/Logo.png')}}" type="image/png">
 
     <!-- Tailwind CSS (via Vite) -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
