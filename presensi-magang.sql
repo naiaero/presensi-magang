@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3308
--- Generation Time: Aug 10, 2026 at 01:51 AM
+-- Generation Time: Aug 11, 2026 at 07:46 AM
 -- Server version: 8.4.3
 -- PHP Version: 8.3.30
 
@@ -259,10 +259,7 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('JugEIOuiPRe95YzaYt6xulNLnGRcz5pLjHRaZ4K5', 3, '10.10.0.1', 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Mobile Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiQnRvM2xrM05JbWVXTEpjQ3dSbnFiMTlUdDJMV0FrSVZNVFdKWEJaUiI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NjQ6Imh0dHA6Ly8xMC4xMC4xLjE0Mi9wcmVzZW5zaS1tYWdhbmcvcHVibGljL2ludGVybi9hdHRlbmRhbmNlL3NjYW4iO3M6NToicm91dGUiO3M6MjI6ImludGVybi5hdHRlbmRhbmNlLnNjYW4iO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX1zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aTozO30=', 1786326477),
-('kAAy9ZOcDcQq393KGKNX5rUx9ekK5Qap4qaFqmPP', 2, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'YTo1OntzOjY6Il90b2tlbiI7czo0MDoiUENtaFBoSE1RMWhDZUJlN0ZqZU5DVzkzN25EVmd0SFU1Nmt0V0hVaSI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NTY6Imh0dHA6Ly9sb2NhbGhvc3QvcHJlc2Vuc2ktbWFnYW5nL3B1YmxpYy9pbnRlcm4vZGFzaGJvYXJkIjtzOjU6InJvdXRlIjtzOjE2OiJpbnRlcm4uZGFzaGJvYXJkIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6MjtzOjIyOiJwZXJtaXNzaW9uX3RvYXN0X3Nob3duIjtiOjE7fQ==', 1786326545),
-('QIDel9KS9OVtB5o9v65dZfPWINbBCwKTqElrUKqR', 1, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiaVo4ZjhMQzRodTg2b0w2WHJTd0dFbWJrdDI1MExpSzFRTUgzZTlvSCI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NTU6Imh0dHA6Ly9sb2NhbGhvc3QvcHJlc2Vuc2ktbWFnYW5nL3B1YmxpYy9hZG1pbi9kYXNoYm9hcmQiO3M6NToicm91dGUiO3M6MTU6ImFkbWluLmRhc2hib2FyZCI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fXM6NTA6ImxvZ2luX3dlYl81OWJhMzZhZGRjMmIyZjk0MDE1ODBmMDE0YzdmNThlYTRlMzA5ODlkIjtpOjE7fQ==', 1786326313),
-('VqVFaeA5p84DvHEVOl7tiA5PDLRarUKlRqB3UH3V', 3, '10.10.1.143', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiSzNjRnFjR2tFR21uQ2g2WmZLNUJERXNCSzFKVjdFUEdYVE9yWWNhaSI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NjQ6Imh0dHA6Ly8xMC4xMC4xLjE0Mi9wcmVzZW5zaS1tYWdhbmcvcHVibGljL2ludGVybi9hdHRlbmRhbmNlL3NjYW4iO3M6NToicm91dGUiO3M6MjI6ImludGVybi5hdHRlbmRhbmNlLnNjYW4iO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX1zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aTozO30=', 1786326295);
+('XeFr2pl4moEZMZ0PA9b5IfJmbC1YEVWPkY4hbTPM', NULL, '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiUzdVWFFBa2pwdGpIUUhxVU1oY0ZJajRlN0VEeWRwRUFFWXlPUFhzciI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NDU6Imh0dHA6Ly9sb2NhbGhvc3QvcHJlc2Vuc2ktbWFnYW5nL3B1YmxpYy9sb2dpbiI7czo1OiJyb3V0ZSI7czo1OiJsb2dpbiI7fX0=', 1786434368);
 
 -- --------------------------------------------------------
 
@@ -294,8 +291,8 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`id`, `name`, `email`, `institution`, `major`, `phone_number`, `start_date`, `end_date`, `duration`, `email_verified_at`, `password`, `role`, `remember_token`, `created_at`, `updated_at`) VALUES
 (1, 'Administrator', 'admin@admin.com', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '$2y$12$kgpOXAYxxeDhnIH4vAtTPOw55hQT/fASjhk9CVaOTYAVprnkxtSfq', 'admin', NULL, '2026-07-28 21:37:02', '2026-07-28 21:37:02'),
-(2, 'Salsabila Nailafahdi', 'naila@gmail.com', 'Universitas Mataram', 'Teknik Informatika', '', '2026-07-20', '2026-08-21', NULL, NULL, '$2y$12$yIxhs.g1pXn6O6FGjGYfauZBWoDuS48IMMIomSeL6f4VteUejpOhm', 'intern', NULL, '2026-07-28 21:37:02', '2026-07-28 21:37:02'),
-(3, 'M. Sagos', 'sagos@gmail.com', 'Universitas Mataram', 'Teknik Informatika', NULL, '2026-07-20', '2026-08-21', '1 bulan', NULL, '$2y$12$pYwlbNw5NuUEmAYbDaFIHeojCzIZh70fNlor4K9mbrzqbncLpRv..', 'intern', NULL, '2026-07-28 22:06:26', '2026-07-28 22:06:26');
+(2, 'Salsabila Nailafahdi', 'naila@gmail.com', 'Universitas Mataram', 'Teknik Informatika', '', '2026-07-20', '2026-08-21', NULL, NULL, '$2y$12$hs3W/l3ddZU4Jx7Xh2WTduAUjsIp1E3DrN0DQNpJqkApQamgidAjq', 'intern', NULL, '2026-07-28 21:37:02', '2026-08-11 07:46:00'),
+(3, 'M. Sagos', 'sagos@gmail.com', 'Universitas Mataram', 'Teknik Informatika', NULL, '2026-07-20', '2026-08-21', '1 bulan', NULL, '$2y$12$GXAOUHola6GBdIS/tRTrfua8VxpShxXnytS5VVF.eBJMAikI011UK', 'intern', NULL, '2026-07-28 22:06:26', '2026-08-11 07:46:04');
 
 --
 -- Indexes for dumped tables

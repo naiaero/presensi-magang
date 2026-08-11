@@ -89,6 +89,16 @@
                     Login
                 </button>
             </form>
+
+            <div class="mt-6 pt-5 border-t border-white/10 text-center">
+                <a href="{{ route('monitoring') }}" class="inline-flex items-center justify-center gap-2 text-xs font-semibold text-blue-100 hover:text-white bg-white/10 hover:bg-white/20 px-4 py-2 rounded-xl transition-all border border-white/15">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span>Monitoring Presensi</span>
+                    <svg class="w-3.5 h-3.5 text-blue-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                    </svg>
+                </a>
+            </div>
         </div>
     </div>
 </body>

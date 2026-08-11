@@ -5,8 +5,14 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Intern\AttendanceController;
 use App\Http\Controllers\Intern\PermissionController;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\MonitoringController;
 
 use Illuminate\Support\Facades\Auth;
+
+// PUBLIC MONITORING DASHBOARD (Akses Publik Tanpa Login)
+Route::get('/monitoring', [MonitoringController::class, 'index'])->name('monitoring');
+Route::get('/monitoring/data', [MonitoringController::class, 'data'])->name('monitoring.data');
+Route::get('/pantau', fn() => redirect()->route('monitoring'));
 
 // Root route: redirect to dashboard if authenticated, otherwise to login
 Route::get('/', function () {
