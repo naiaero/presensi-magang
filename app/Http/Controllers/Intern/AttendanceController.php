@@ -23,7 +23,7 @@ class AttendanceController extends Controller
     public function dashboard()
     {
         $userId = Auth::id();
-        $today = Carbon::today()->toDateString();
+        $today = Carbon::now('Asia/Makassar')->toDateString();
 
         // Ambil data presensi hari ini
         $todayAttendance = Attendance::where('user_id', $userId)
@@ -126,7 +126,7 @@ class AttendanceController extends Controller
     public function scanView()
     {
         $user = Auth::user();
-        $today = Carbon::today()->toDateString();
+        $today = Carbon::now('Asia/Makassar')->toDateString();
 
         if ($user->end_date && Carbon::parse($today)->greaterThan(Carbon::parse($user->end_date))) {
             return redirect()->route('intern.dashboard')

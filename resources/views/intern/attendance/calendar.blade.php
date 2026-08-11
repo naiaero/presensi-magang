@@ -67,9 +67,9 @@
                     $dateStr = sprintf('%s-%02d-%02d', $year, $month, $day);
                     $att = $attendances->firstWhere('date', $dateStr);
                     $perm = $permissions->firstWhere('date', $dateStr);
-                    $isPast = \Carbon\Carbon::parse($dateStr)->startOfDay()->lt(\Carbon\Carbon::today());
-                    $isWeekend = \Carbon\Carbon::parse($dateStr)->isWeekend();
-                    $isToday = \Carbon\Carbon::parse($dateStr)->isToday();
+                    $isPast = \Carbon\Carbon::parse($dateStr, 'Asia/Makassar')->startOfDay()->lt(\Carbon\Carbon::now('Asia/Makassar')->startOfDay());
+                    $isWeekend = \Carbon\Carbon::parse($dateStr, 'Asia/Makassar')->isWeekend();
+                    $isToday = \Carbon\Carbon::parse($dateStr, 'Asia/Makassar')->isToday();
                     
                     $isBeforeAccount = isset($userCreatedAt) && $dateStr < $userCreatedAt;
                     $isApprovedLate = ($perm && $perm->status === 'Approved' && $perm->reason_option === 'Terlambat / Di luar Radius Kantor');

@@ -62,7 +62,7 @@
                     <div>
                         <h3 class="font-semibold text-slate-800 group-hover:text-blue-600 transition-colors flex items-center gap-2">
                             {{ $user->name }}
-                            @if($user->end_date && \Carbon\Carbon::today()->toDateString() > $user->end_date)
+                            @if($user->end_date && \Carbon\Carbon::now('Asia/Makassar')->toDateString() > $user->end_date)
                                 <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-rose-100 text-rose-700">Nonaktif</span>
                             @else
                                 <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-emerald-100 text-emerald-700">Aktif</span>

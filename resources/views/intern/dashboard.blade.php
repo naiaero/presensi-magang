@@ -7,7 +7,7 @@
     <div class="grid grid-cols-1 md:grid-cols-12 gap-5 md:gap-8">
 
     @php
-        $isExpired = auth()->user()->end_date && \Carbon\Carbon::today()->toDateString() > auth()->user()->end_date;
+        $isExpired = auth()->user()->end_date && \Carbon\Carbon::now('Asia/Makassar')->toDateString() > auth()->user()->end_date;
     @endphp
 
     <!-- Kolom Utama Kiri (Berisi Profil & Status) -->
@@ -31,7 +31,7 @@
                 </div>
                 <div class="text-left md:text-right">
                     <p class="text-[10px] md:text-xs text-blue-200">TANGGAL</p>
-                    <p class="text-sm md:text-base font-semibold">{{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}</p>
+                    <p class="text-sm md:text-base font-semibold">{{ \Carbon\Carbon::now('Asia/Makassar')->translatedFormat('d F Y') }}</p>
                 </div>
             </div>
         </div>
