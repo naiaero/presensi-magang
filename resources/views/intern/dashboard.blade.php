@@ -41,16 +41,49 @@
             <h3 class="text-xs md:text-sm font-bold uppercase tracking-wider text-slate-500">Menu Aksi Cepat</h3>
 
             <div class="grid grid-cols-2 gap-3 md:gap-4">
+                @php
+                    $isIzin = isset($todayPermission); // Any izin submitted
+                    $hasAbsenMasuk = isset($todayAttendance) && $todayAttendance->time_in;
+                    $hasAbsenPulang = isset($todayAttendance) && $todayAttendance->time_out;
+
+                    $disableAbsen = ($isIzin && !$hasAbsenMasuk) || $hasAbsenPulang;
+                    $disableIzin = $isIzin || $hasAbsenMasuk;
+                    
+                    if ($hasAbsenPulang) {
+                        $absenLabel = 'Selesai';
+                        $absenSubLabel = 'Sudah Pulang';
+                    } elseif ($hasAbsenMasuk) {
+                        $absenLabel = 'Pulang';
+                        $absenSubLabel = 'Pulang Sekarang';
+                    } elseif ($isIzin) {
+                        $absenLabel = 'Presensi';
+                        $absenSubLabel = 'Sudah Izin';
+                    } else {
+                        $absenLabel = 'Presensi';
+                        $absenSubLabel = 'Masuk Sekarang';
+                    }
+                @endphp
+
                 <!-- Tombol Absen Masuk / Pulang -->
                 @if(!$isExpired)
-                    <a href="{{ route('intern.attendance.scan') }}" 
-                       class="flex flex-col items-center justify-center p-5 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white rounded-2xl shadow-md shadow-blue-200 transition-all text-center">
-                        <svg class="w-8 h-8 md:w-10 md:h-10 mb-2 md:mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
-                        <span class="text-xs md:text-sm font-bold">Presensi</span>
-                        <span class="text-[10px] md:text-xs text-blue-100 font-light mt-0.5">Masuk/Pulang</span>
-                    </a>
+                    @if($disableAbsen)
+                        <div class="flex flex-col items-center justify-center p-5 bg-slate-300 text-slate-500 rounded-2xl cursor-not-allowed text-center opacity-70" title="{{ ($isIzin && !$hasAbsenMasuk) ? 'Anda sudah mengajukan izin hari ini' : 'Anda sudah absen pulang' }}">
+                            <svg class="w-8 h-8 md:w-10 md:h-10 mb-2 md:mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            <span class="text-xs md:text-sm font-bold">{{ $absenLabel }}</span>
+                            <span class="text-[10px] md:text-xs text-slate-500 font-light mt-0.5">{{ $absenSubLabel }}</span>
+                        </div>
+                    @else
+                        <a href="{{ route('intern.attendance.scan') }}" 
+                           class="flex flex-col items-center justify-center p-5 {{ $hasAbsenMasuk ? 'bg-emerald-600 hover:bg-emerald-700 shadow-emerald-200' : 'bg-blue-600 hover:bg-blue-700 shadow-blue-200' }} active:scale-95 text-white rounded-2xl shadow-md transition-all text-center">
+                            <svg class="w-8 h-8 md:w-10 md:h-10 mb-2 md:mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            <span class="text-xs md:text-sm font-bold">{{ $absenLabel }}</span>
+                            <span class="text-[10px] md:text-xs text-white/80 font-light mt-0.5">{{ $absenSubLabel }}</span>
+                        </a>
+                    @endif
                 @else
                     <div class="flex flex-col items-center justify-center p-5 bg-slate-300 text-slate-500 rounded-2xl cursor-not-allowed text-center opacity-70">
                         <svg class="w-8 h-8 md:w-10 md:h-10 mb-2 md:mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -63,14 +96,24 @@
 
                 <!-- Tombol Form Izin -->
                 @if(!$isExpired)
-                    <a href="{{ route('intern.permission.create') }}" 
-                       class="flex flex-col items-center justify-center p-5 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white rounded-2xl shadow-md shadow-emerald-200 transition-all text-center">
-                        <svg class="w-8 h-8 md:w-10 md:h-10 mb-2 md:mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                        </svg>
-                        <span class="text-xs md:text-sm font-bold">Pengajuan Izin</span>
-                        <span class="text-[10px] md:text-xs text-emerald-100 font-light mt-0.5">Telat/Tidak Hadir</span>
-                    </a>
+                    @if($disableIzin)
+                        <div class="flex flex-col items-center justify-center p-5 bg-slate-300 text-slate-500 rounded-2xl cursor-not-allowed text-center opacity-70" title="{{ $hasAbsenMasuk ? 'Anda sudah absen hari ini' : 'Anda sudah mengajukan izin' }}">
+                            <svg class="w-8 h-8 md:w-10 md:h-10 mb-2 md:mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                            <span class="text-xs md:text-sm font-bold">Pengajuan Izin</span>
+                            <span class="text-[10px] md:text-xs text-slate-500 font-light mt-0.5">{{ $hasAbsenMasuk ? 'Sudah Hadir' : 'Sudah Diajukan' }}</span>
+                        </div>
+                    @else
+                        <a href="{{ route('intern.permission.create') }}" 
+                           class="flex flex-col items-center justify-center p-5 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white rounded-2xl shadow-md shadow-emerald-200 transition-all text-center">
+                            <svg class="w-8 h-8 md:w-10 md:h-10 mb-2 md:mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                            <span class="text-xs md:text-sm font-bold">Pengajuan Izin</span>
+                            <span class="text-[10px] md:text-xs text-emerald-100 font-light mt-0.5">Telat/Tidak Hadir</span>
+                        </a>
+                    @endif
                 @else
                     <div class="flex flex-col items-center justify-center p-5 bg-slate-300 text-slate-500 rounded-2xl cursor-not-allowed text-center opacity-70">
                         <svg class="w-8 h-8 md:w-10 md:h-10 mb-2 md:mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">

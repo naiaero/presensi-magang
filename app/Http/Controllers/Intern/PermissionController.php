@@ -14,7 +14,7 @@ class PermissionController extends Controller
     /**
      * Menampilkan Halaman Form Pengajuan Izin
      */
-    public function create()
+    public function create(Request $request)
     {
         $user = Auth::user();
         $today = Carbon::now('Asia/Makassar')->toDateString();
@@ -24,16 +24,26 @@ class PermissionController extends Controller
                 ->with('error', 'Masa magang Anda telah selesai pada tanggal ' . Carbon::parse($user->end_date)->translatedFormat('d F Y') . '. Anda tidak dapat lagi mengajukan izin.');
         }
         
-        // Opsi alasan standar yang dapat dipilih anak magang
-        $reasonOptions = [
-            'Sakit',
-            'Terlambat / Di luar Radius Kantor',
-            'Urusan Kampus / Sekolah',
-            'Keperluan Keluarga / Acara Penting',
-            'Lainnya'
-        ];
+        $type = $request->query('type', 'tidak_hadir');
+        
+        if ($type === 'telat') {
+            $reasonOptions = [
+                'Macet',
+                'Ban Bocor / Kendaraan Rusak',
+                'Cuaca Buruk / Hujan Deras',
+                'Urusan Mendadak',
+                'Lainnya'
+            ];
+        } else {
+            $reasonOptions = [
+                'Sakit',
+                'Urusan Kampus / Sekolah',
+                'Keperluan Keluarga / Acara Penting',
+                'Lainnya'
+            ];
+        }
 
-        return view('intern.permission.create', compact('today', 'reasonOptions'));
+        return view('intern.permission.create', compact('today', 'reasonOptions', 'type'));
     }
 
     /**
@@ -79,7 +89,6 @@ class PermissionController extends Controller
             $filePath = $file->storeAs('permissions', $filename, 'public');
         }
 
-        // Simpan Data Ke Database
         $permission = Permission::create([
             'user_id'       => $user->id,
             'date'          => $request->date,
@@ -89,23 +98,33 @@ class PermissionController extends Controller
             'status'        => 'Approved',
         ]);
 
-        if ($permission->reason_option === 'Terlambat / Di luar Radius Kantor') {
+        $type = $request->type ?? 'tidak_hadir';
+
+        if ($type === 'telat') {
             $attendance = Attendance::firstOrNew([
                 'user_id' => $permission->user_id,
                 'date'    => $permission->date,
             ]);
 
-            $attendance->status = 'Hadir';
+            $attendance->status = 'Hadir'; // Atau 'Telat' jika ingin lebih spesifik
 
             if (!$attendance->time_in) {
                 $attendance->time_in = $permission->created_at->timezone('Asia/Makassar')->toTimeString();
             }
 
             $attendance->save();
+        } else {
+            // Izin tidak hadir, buat record attendance dengan status Izin agar terlihat di history
+            $attendance = Attendance::firstOrNew([
+                'user_id' => $permission->user_id,
+                'date'    => $permission->date,
+            ]);
+            $attendance->status = 'Izin';
+            $attendance->save();
         }
 
         return redirect()->route('intern.dashboard')
-            ->with('success', 'Pengajuan izin berhasil dilakukan.');
+            ->with('success', $type === 'telat' ? 'Keterangan terlambat berhasil disimpan. Jangan lupa absen pulang nanti.' : 'Pengajuan izin berhasil dilakukan.');
     }
 
     /**

@@ -14,7 +14,7 @@ class AttendanceController extends Controller
     // Koordinat Pusat Kantor Bapenda NTB (Mataram)
     private float $officeLat = -8.583333; 
     private float $officeLng = 116.116667;
-    private int $maxRadiusMeters = 100; // Radius toleransi presensi (100 meter)
+    private int $maxRadiusMeters = 3000; // Diperbesar menjadi 3000 meter untuk toleransi akurasi GPS laptop/desktop
     private string $lateLimitTime = '07:30:00'; // Batas jam masuk tepat waktu
 
     /**
@@ -186,13 +186,7 @@ class AttendanceController extends Controller
             }
         }
 
-        // 2. Cek Batas Waktu Masuk (Maksimal 07:30 WITA)
-        if ($currentTime > $this->lateLimitTime) {
-            return redirect()->route('intern.permission.create')
-                ->with('error', 'Waktu presensi masuk telah melewati batas 07:30 WITA. Silakan ajukan Form Izin/Terlambat.');
-        }
-
-        // 3. Validasi Geofencing (Radius dari Kantor Bapenda NTB)
+        // 2. Validasi Geofencing (Radius dari Kantor Bapenda NTB)
         $distance = $this->calculateHaversineDistance(
             $request->latitude,
             $request->longitude,
@@ -201,8 +195,14 @@ class AttendanceController extends Controller
         );
 
         if ($distance > $this->maxRadiusMeters) {
-            return redirect()->route('intern.permission.create')
-                ->with('error', 'Anda berada di luar radius Kantor Bapenda NTB (' . round($distance) . ' meter). Silakan lakukan presensi di dalam kantor atau ajukan Izin.');
+            return redirect()->route('intern.permission.create', ['type' => 'tidak_hadir'])
+                ->with('error', 'Anda berada di luar radius Kantor Bapenda NTB (' . round($distance) . ' meter). Silakan lakukan presensi di dalam kantor atau ajukan Pengajuan Izin Tidak Hadir.');
+        }
+
+        // 3. Cek Batas Waktu Masuk (Maksimal 07:30 WITA)
+        if ($currentTime > $this->lateLimitTime) {
+            return redirect()->route('intern.permission.create', ['type' => 'telat'])
+                ->with('error', 'Waktu presensi masuk telah melewati batas 07:30 WITA. Silakan ajukan Form Keterangan Terlambat.');
         }
 
         // 4. Simpan Data Presensi Masuk

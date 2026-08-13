@@ -8,8 +8,8 @@
     <!-- Top Header Card -->
     <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 flex items-center justify-between">
         <div>
-            <h2 class="text-base font-bold text-slate-800">Form Pengajuan Izin</h2>
-            <p class="text-xs text-slate-500">Isi alasan jika terlambat / di luar kantor</p>
+            <h2 class="text-base font-bold text-slate-800">{{ $type === 'telat' ? 'Form Keterangan Terlambat' : 'Form Pengajuan Izin' }}</h2>
+            <p class="text-xs text-slate-500">{{ $type === 'telat' ? 'Isi alasan mengapa Anda terlambat hari ini' : 'Isi alasan mengapa Anda berhalangan hadir' }}</p>
         </div>
         <a href="{{ route('intern.dashboard') }}" class="p-2 text-slate-400 hover:text-slate-600 rounded-lg bg-slate-50">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -34,17 +34,19 @@
     <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100">
         <form action="{{ route('intern.permission.store') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
             @csrf
+            
+            <input type="hidden" name="type" value="{{ $type }}">
 
             <!-- Tanggal Izin -->
             <div>
-                <label class="block text-xs font-semibold text-slate-700 mb-1">Tanggal Izin <span class="text-rose-500">*</span></label>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">Tanggal <span class="text-rose-500">*</span></label>
                 <input type="date" name="date" value="{{ old('date', $today) }}" min="{{ $today }}"
                        class="w-full text-xs font-medium border border-slate-200 rounded-xl p-3 bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
             </div>
 
             <!-- Dropdown Pilihan Alasan -->
             <div>
-                <label class="block text-xs font-semibold text-slate-700 mb-1">Kategori Alasan Izin <span class="text-rose-500">*</span></label>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">{{ $type === 'telat' ? 'Alasan Keterlambatan' : 'Kategori Alasan Izin' }} <span class="text-rose-500">*</span></label>
                 <select id="reason_option" name="reason_option" onchange="toggleCustomReason()" 
                         class="w-full text-xs border border-slate-200 rounded-xl p-3 bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
                     <option value="">-- Pilih Alasan --</option>

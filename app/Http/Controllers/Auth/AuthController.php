@@ -48,13 +48,12 @@ class AuthController extends Controller
                     ? route('admin.dashboard')
                     : route('intern.dashboard');
 
-                // Clear any stored intended URL pointing to root or login to prevent redirect loop
-                $intended = session()->get('url.intended');
-                if ($intended && in_array(rtrim($intended, '/'), [url('/'), route('login'), url('/login')])) {
+                // Clear any stored intended URL to prevent redirect loop
+                if (session()->has('url.intended')) {
                     session()->forget('url.intended');
                 }
 
-                return redirect()->intended($targetRoute);
+                return redirect($targetRoute);
             }
         }
 
