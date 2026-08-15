@@ -76,7 +76,7 @@
                 </div>
                 <div>
                     <h1 class="text-base sm:text-lg font-bold text-slate-800 leading-tight tracking-wide">Badan Pendapatan Daerah Provinsi Nusa Tenggara Barat</h1>
-                    <p class="text-xs sm:text-sm text-slate-500 font-medium tracking-wide">Jalan Majapahit Nomor: 17 Mataram</p>
+                    <p class="text-xs sm:text-sm text-slate-500 font-medium tracking-wide">Jalan Majapahit No. 17 Mataram</p>
                 </div>
             </div>
             
