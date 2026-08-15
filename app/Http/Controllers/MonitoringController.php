@@ -64,6 +64,7 @@ class MonitoringController extends Controller
             ->keyBy('user_id');
 
         $presentList = [];
+        $permissionList = [];
         $absentList = [];
 
         $totalHadir = 0;
@@ -74,73 +75,74 @@ class MonitoringController extends Controller
             $attendance = $attendances->get($user->id);
             $permission = $permissions->get($user->id);
 
-            // Format identifier/NIP (bisa nomor telepon atau format ID MGN-XXXX)
-            $nip = $user->phone_number ? $user->phone_number : 'MGN-' . str_pad($user->id, 4, '0', STR_PAD_LEFT);
+            $timeIn = '-';
+            $timeOut = '-';
+            $status = '-';
+            $statusType = '';
 
-            if ($attendance || $permission) {
-                $timeIn = '-';
-                $timeOut = '-';
-                $status = 'Masuk';
-                $statusType = 'masuk';
+            // HADIR: ada record absensi (termasuk terlambat)
+            if ($attendance) {
+                $timeIn = $attendance->time_in ? Carbon::parse($attendance->time_in)->format('H:i:s') : '-';
+                $timeOut = $attendance->time_out ? Carbon::parse($attendance->time_out)->format('H:i:s') : '-';
 
-                if ($attendance) {
-                    $timeIn = $attendance->time_in ? Carbon::parse($attendance->time_in)->format('H:i:s') : '-';
-                    $timeOut = $attendance->time_out ? Carbon::parse($attendance->time_out)->format('H:i:s') : '-';
-                    
-                    if ($attendance->status === 'Telat') {
-                        $status = 'Terlambat';
-                        $statusType = 'terlambat';
-                    } else {
-                        $status = 'Masuk';
-                        $statusType = 'masuk';
-                    }
-                }
-
-                // Jika ada izin, prioritaskan status izin/sakit
-                if ($permission) {
-                    if ($permission->reason_option === 'Sakit') {
-                        $status = 'Sakit';
-                        $statusType = 'sakit';
-                    } elseif ($permission->reason_option === 'Terlambat / Di luar Radius Kantor') {
-                        if ($timeIn === '-') {
-                            $timeIn = $permission->created_at ? $permission->created_at->timezone('Asia/Makassar')->format('H:i:s') : '-';
-                        }
-                        $status = 'Masuk';
-                        $statusType = 'masuk';
-                    } else {
-                        $status = 'Izin';
-                        $statusType = 'izin';
-                    }
-                }
-
-                // Hitung statistik
-                if ($statusType === 'sakit') {
-                    $totalSakit++;
-                } elseif ($statusType === 'izin') {
-                    $totalIzin++;
+                if ($attendance->status === 'Telat') {
+                    $status = 'Terlambat';
+                    $statusType = 'terlambat';
                 } else {
-                    $totalHadir++;
+                    $status = 'Masuk';
+                    $statusType = 'masuk';
                 }
+
+                $totalHadir++;
 
                 $presentList[] = [
-                    'id' => $user->id,
-                    'name' => $user->name,
-                    'institution' => $user->institution ?: '-',
-                    'major' => $user->major ?: '',
-                    'email' => $user->email,
+                    'id'           => $user->id,
+                    'name'         => $user->name,
+                    'institution'  => $user->institution ?: '-',
+                    'major'        => $user->major ?: '',
+                    'email'        => $user->email,
                     'phone_number' => $user->phone_number ?: '-',
-                    'time_in' => $timeIn,
-                    'time_out' => $timeOut,
-                    'status' => $status,
-                    'status_type' => $statusType,
+                    'time_in'      => $timeIn,
+                    'time_out'     => $timeOut,
+                    'status'       => $status,
+                    'status_type'  => $statusType,
                 ];
-            } else {
+            }
+            // IZIN/SAKIT: tidak ada absensi, tapi ada form izin (apapun alasannya)
+            elseif ($permission) {
+                $reason = strtolower(trim((string) ($permission->reason_option ?? '')));
+
+                if (strpos($reason, 'sakit') !== false) {
+                    $status = 'Sakit';
+                    $statusType = 'sakit';
+                    $totalSakit++;
+                } else {
+                    $status = 'Izin';
+                    $statusType = 'izin';
+                    $totalIzin++;
+                }
+
+                $permissionList[] = [
+                    'id'           => $user->id,
+                    'name'         => $user->name,
+                    'institution'  => $user->institution ?: '-',
+                    'major'        => $user->major ?: '',
+                    'email'        => $user->email,
+                    'phone_number' => $user->phone_number ?: '-',
+                    'time_in'      => $timeIn,
+                    'time_out'     => $timeOut,
+                    'status'       => $status,
+                    'status_type'  => $statusType,
+                ];
+            }
+            // ALPA: tidak ada absensi dan tidak ada izin
+            else {
                 $absentList[] = [
-                    'id' => $user->id,
-                    'name' => $user->name,
-                    'institution' => $user->institution ?: '-',
-                    'major' => $user->major ?: '',
-                    'email' => $user->email,
+                    'id'           => $user->id,
+                    'name'         => $user->name,
+                    'institution'  => $user->institution ?: '-',
+                    'major'        => $user->major ?: '',
+                    'email'        => $user->email,
                     'phone_number' => $user->phone_number ?: '-',
                 ];
             }
@@ -157,6 +159,7 @@ class MonitoringController extends Controller
             'totalSakit' => $totalSakit,
             'totalIzin' => $totalIzin,
             'presentList' => $presentList,
+            'permissionList' => $permissionList,
             'absentList' => $absentList,
             'lastUpdated' => $now->format('H:i:s') . ' WITA',
         ];

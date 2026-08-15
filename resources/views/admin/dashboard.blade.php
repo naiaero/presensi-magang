@@ -107,11 +107,18 @@
         </div>
         <div class="divide-y divide-slate-100">
             @forelse($permissions as $perm)
-            <div class="p-6 {{ $loop->iteration % 2 === 0 ? 'bg-slate-100' : 'bg-white' }}">
+            <div class="p-6 {{ $loop->iteration % 2 === 0 ? 'bg-slate-50' : 'bg-white' }}">
                 <div class="flex flex-col md:flex-row md:items-start justify-between gap-4">
-                    <div>
-                        <div class="flex items-center gap-2 mb-1">
+                    <div class="flex-1">
+                        <div class="flex items-center gap-2 mb-1 flex-wrap">
                             <h3 class="font-bold text-slate-800">{{ $perm->user->name ?? 'Unknown' }}</h3>
+                            @if($perm->status === 'Pending')
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-100 text-amber-700">Menunggu</span>
+                            @elseif($perm->status === 'Approved')
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-100 text-emerald-700">Disetujui</span>
+                            @elseif($perm->status === 'Rejected')
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-rose-100 text-rose-700">Ditolak</span>
+                            @endif
                         </div>
                         <p class="text-sm font-medium text-slate-700 mb-1">Tanggal Izin: {{ \Carbon\Carbon::parse($perm->date)->format('d F Y') }}</p>
                         <div class="text-sm text-slate-600 bg-slate-50 p-3 rounded-lg border border-slate-100 mt-2 space-y-2">
@@ -134,7 +141,16 @@
                             @endif
                         </div>
                     </div>
-                    <div class="flex gap-2 shrink-0"></div>
+                    <div class="flex flex-col gap-2 shrink-0">
+                        @if($perm->status === 'Pending')
+                        <button type="button" onclick="openConfirmPermissionModal('{{ $perm->id }}', 'Approved', '{{ addslashes($perm->user->name ?? 'Unknown') }}')" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold transition-colors">
+                            Setujui
+                        </button>
+                        <button type="button" onclick="openConfirmPermissionModal('{{ $perm->id }}', 'Rejected', '{{ addslashes($perm->user->name ?? 'Unknown') }}')" class="px-4 py-2 bg-rose-100 hover:bg-rose-200 text-rose-700 rounded-xl text-xs font-semibold transition-colors">
+                            Tolak
+                        </button>
+                        @endif
+                    </div>
                 </div>
             </div>
             @empty
@@ -296,13 +312,13 @@
                 <!-- Legends -->
                 <div class="flex flex-wrap gap-3 mb-6">
                     <span class="flex items-center gap-2 text-xs font-semibold px-3 py-1.5 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-100 shadow-sm">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Hadir
+                        <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Hadir (termasuk terlambat)
                     </span>
                     <span class="flex items-center gap-2 text-xs font-semibold px-3 py-1.5 rounded-xl bg-amber-50 text-amber-700 border border-amber-100 shadow-sm">
-                        <span class="w-2 h-2 rounded-full bg-amber-500"></span> Izin
+                        <span class="w-2 h-2 rounded-full bg-amber-500"></span> Izin / Sakit (mengisi form)
                     </span>
                     <span class="flex items-center gap-2 text-xs font-semibold px-3 py-1.5 rounded-xl bg-rose-50 text-rose-700 border border-rose-100 shadow-sm">
-                        <span class="w-2 h-2 rounded-full bg-rose-500"></span> Alpa
+                        <span class="w-2 h-2 rounded-full bg-rose-500"></span> Alpa (tidak hadir & tidak izin)
                     </span>
                 </div>
 
@@ -496,23 +512,27 @@
             const isToday = cellDateZero === todayZero;
             const isBeforeAccount = userCreatedAt && dateStr < userCreatedAt;
             
-            const isApprovedLate = (perm && perm.status === 'Approved' && perm.reason_option === 'Terlambat / Di luar Radius Kantor');
-            const isApprovedIzin = (perm && perm.status === 'Approved' && perm.reason_option !== 'Terlambat / Di luar Radius Kantor');
-
-            const isHadir = att || isApprovedLate;
-            const isIzin = !isHadir && isApprovedIzin;
-            const isAlpa = !isHadir && !isIzin && !isBeforeAccount && ((perm && perm.status === 'Rejected') || (isPast && !isWeekend));
+            // Logika Status Kehadiran:
+            // HADIR   = ada record absensi (termasuk telat)
+            // IZIN    = tidak ada absensi, tapi ada pengajuan izin/sakit
+            // ALPA    = tidak ada absensi dan tidak ada izin, di hari kerja yang sudah lewat
+            const isHadir = !!att;
+            const isIzin = !isHadir && !!perm;
+            const isAlpa = !isHadir && !isIzin && !isBeforeAccount && isPast && !isWeekend;
 
             let todayStyle = isToday ? "border: 4px solid #2563eb; font-weight: bold; position: relative; z-index: 10;" : "";
             let bgStyle = `background: #fff; border: ${isToday ? '4px solid #2563eb' : '1px solid #e5e7eb'}; color: #374151; ${todayStyle}`;
             let indicator = "";
 
             if (isHadir) {
+                // Cek apakah ada keterangan terlambat
+                const isLate = perm && perm.reason_option === 'Terlambat / Di luar Radius Kantor';
                 bgStyle = `background-color: #ecfdf5; color: #065f46; border: ${isToday ? '4px solid #2563eb' : '1px solid #a7f3d0'}; ${todayStyle}`;
-                indicator = "<div style='font-size: 10px; margin-top: 4px; font-weight: 600; color: #047857;'>Hadir</div>";
+                indicator = `<div style='font-size: 10px; margin-top: 4px; font-weight: 600; color: #047857;'>Hadir${isLate ? ' (Terlambat)' : ''}</div>`;
             } else if (isIzin) {
+                const izinStatus = perm.status === 'Approved' ? ' ✓' : perm.status === 'Rejected' ? ' ✗' : '';
                 bgStyle = `background-color: #fffbeb; color: #92400e; border: ${isToday ? '4px solid #2563eb' : '1px solid #fde68a'}; ${todayStyle}`;
-                indicator = "<div style='font-size: 10px; margin-top: 4px; font-weight: 600; color: #b45309;'>Izin</div>";
+                indicator = `<div style='font-size: 10px; margin-top: 4px; font-weight: 600; color: #b45309;'>Izin${izinStatus}</div>`;
             } else if (isAlpa) {
                 bgStyle = `background-color: #fff1f2; color: #9f1239; border: ${isToday ? '4px solid #2563eb' : '1px solid #fecdd3'}; ${todayStyle}`;
                 indicator = "<div style='font-size: 10px; margin-top: 4px; font-weight: 600; color: #be123c;'>Alpa</div>";

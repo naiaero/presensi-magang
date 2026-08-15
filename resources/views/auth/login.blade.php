@@ -15,15 +15,14 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         body { font-family: 'Outfit', sans-serif; }
+        /* Make the page background white and the panel solid white */
         .glass-panel {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: #ffffff;
+            border: 1px solid rgba(2,6,23,0.06);
         }
         .dark .glass-panel {
-            background: rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            background: #0b1220;
+            border: 1px solid rgba(255, 255, 255, 0.04);
         }
         .animated-bg {
             background: linear-gradient(-45deg, #1e3a8a, #3b82f6, #0ea5e9, #1d4ed8);
@@ -55,46 +54,45 @@
         }
     </style>
 </head>
-<body class="antialiased animated-bg text-slate-800 dark:text-slate-200 min-h-screen flex items-center justify-center p-6 selection:bg-cyan-500 selection:text-white">
+    <body class="antialiased bg-white text-slate-800 dark:text-slate-200 min-h-screen flex items-center justify-center p-6 selection:bg-cyan-500 selection:text-white">
 
     <div class="w-full max-w-md relative z-10">
-        <div class="glass-panel rounded-3xl p-8 relative overflow-hidden shadow-2xl shadow-blue-900/40">
+        <div class="glass-panel rounded-3xl p-8 relative overflow-hidden shadow-lg shadow-slate-200">
             <div class="text-center mb-8">
                 <div class="logo-frame">
                     <img src="{{ asset('images/Logo.png') }}" alt="Logo Presensi" class="logo-image">
                 </div>
-                <h2 class="text-2xl font-bold text-white">Login</h2>
-                <p class="text-blue-200 text-sm mt-2">Presensi Magang Bapenda NTB</p>
+                <h2 class="text-2xl font-bold text-slate-800">Login</h2>
+                <p class="text-slate-500 text-sm mt-2">Presensi Magang Bapenda NTB</p>
             </div>
 
             <form method="POST" action="{{ route('login') }}" class="space-y-4" onsubmit="sessionStorage.setItem('session_active', '1');">
                 @csrf
 
                 <div>
-                    <label for="email" class="block text-sm font-semibold text-blue-100 mb-2">Email</label>
+                    <label for="email" class="block text-sm font-semibold text-slate-700 mb-2">Email</label>
                     <input id="email" type="text" name="email" value="{{ old('email') }}" required autofocus autocomplete="username"
-                        class="w-full px-4 py-2.5 bg-white/10 border border-white/20 rounded-lg text-white placeholder-blue-200/50 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent transition-all backdrop-blur-sm">
+                        class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-lg text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent transition-all">
                     @error('email')
                         <p class="text-red-300 text-xs mt-1.5">{{ $message }}</p>
                     @enderror
                 </div>
 
                 <div>
-                    <label for="password" class="block text-sm font-semibold text-blue-100 mb-2">Password</label>
+                    <label for="password" class="block text-sm font-semibold text-slate-700 mb-2">Password</label>
                     <input id="password" type="password" name="password" required autocomplete="current-password"
-                        class="w-full px-4 py-2.5 bg-white/10 border border-white/20 rounded-lg text-white placeholder-blue-200/50 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent transition-all backdrop-blur-sm">
+                        class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-lg text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent transition-all">
                 </div>
 
-                <button type="submit" class="w-full py-2.5 mt-4 bg-white text-blue-700 font-semibold rounded-lg shadow-lg hover:shadow-xl hover:bg-blue-50 transition-all">
+                <button type="submit" class="w-full py-2.5 mt-4 bg-blue-600 text-white font-semibold rounded-lg shadow hover:shadow-md hover:bg-blue-700 transition-all">
                     Login
                 </button>
             </form>
-
-            <div class="mt-6 pt-5 border-t border-white/10 text-center">
-                <a href="{{ route('monitoring') }}" class="inline-flex items-center justify-center gap-2 text-xs font-semibold text-blue-100 hover:text-white bg-white/10 hover:bg-white/20 px-4 py-2 rounded-xl transition-all border border-white/15">
+            <div class="mt-6 pt-5 border-t border-slate-100 text-center">
+                <a href="{{ route('monitoring') }}" class="inline-flex items-center justify-center gap-2 text-xs font-semibold text-slate-600 hover:text-slate-800 bg-slate-50 hover:bg-slate-100 px-4 py-2 rounded-xl transition-all border border-slate-100">
                     <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
                     <span>Monitoring Presensi</span>
-                    <svg class="w-3.5 h-3.5 text-blue-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
                     </svg>
                 </a>

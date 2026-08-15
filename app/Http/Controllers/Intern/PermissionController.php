@@ -26,22 +26,13 @@ class PermissionController extends Controller
         
         $type = $request->query('type', 'tidak_hadir');
         
-        if ($type === 'telat') {
-            $reasonOptions = [
-                'Macet',
-                'Ban Bocor / Kendaraan Rusak',
-                'Cuaca Buruk / Hujan Deras',
-                'Urusan Mendadak',
-                'Lainnya'
-            ];
-        } else {
-            $reasonOptions = [
-                'Sakit',
-                'Urusan Kampus / Sekolah',
-                'Keperluan Keluarga / Acara Penting',
-                'Lainnya'
-            ];
-        }
+        // Menyatukan pilihan alasan untuk form izin tidak hadir dan form terlambat
+        $reasonOptions = [
+            'Sakit',
+            'Urusan Kampus / Sekolah',
+            'Keperluan Keluarga / Acara Penting',
+            'Lainnya'
+        ];
 
         return view('intern.permission.create', compact('today', 'reasonOptions', 'type'));
     }
@@ -101,27 +92,22 @@ class PermissionController extends Controller
         $type = $request->type ?? 'tidak_hadir';
 
         if ($type === 'telat') {
+            // Izin terlambat: tetap buat record attendance karena mereka memang masuk kerja
             $attendance = Attendance::firstOrNew([
                 'user_id' => $permission->user_id,
                 'date'    => $permission->date,
             ]);
 
-            $attendance->status = 'Hadir'; // Atau 'Telat' jika ingin lebih spesifik
+            $attendance->status = 'Telat';
 
             if (!$attendance->time_in) {
                 $attendance->time_in = $permission->created_at->timezone('Asia/Makassar')->toTimeString();
             }
 
             $attendance->save();
-        } else {
-            // Izin tidak hadir, buat record attendance dengan status Izin agar terlihat di history
-            $attendance = Attendance::firstOrNew([
-                'user_id' => $permission->user_id,
-                'date'    => $permission->date,
-            ]);
-            $attendance->status = 'Izin';
-            $attendance->save();
         }
+        // Izin tidak hadir: TIDAK membuat record attendance.
+        // Monitoring & kalender membaca langsung dari tabel permissions.
 
         return redirect()->route('intern.dashboard')
             ->with('success', $type === 'telat' ? 'Keterangan terlambat berhasil disimpan. Jangan lupa absen pulang nanti.' : 'Pengajuan izin berhasil dilakukan.');

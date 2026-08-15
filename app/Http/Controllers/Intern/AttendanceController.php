@@ -14,7 +14,7 @@ class AttendanceController extends Controller
     // Koordinat Pusat Kantor Bapenda NTB (Mataram)
     private float $officeLat = -8.583333; 
     private float $officeLng = 116.116667;
-    private int $maxRadiusMeters = 3000; // Diperbesar menjadi 3000 meter untuk toleransi akurasi GPS laptop/desktop
+    private int $maxRadiusMeters = 3000;
     private string $lateLimitTime = '07:30:00'; // Batas jam masuk tepat waktu
 
     /**

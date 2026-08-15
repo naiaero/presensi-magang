@@ -41,7 +41,8 @@
             <div>
                 <label class="block text-xs font-semibold text-slate-700 mb-1">Tanggal <span class="text-rose-500">*</span></label>
                 <input type="date" name="date" value="{{ old('date', $today) }}" min="{{ $today }}"
-                       class="w-full text-xs font-medium border border-slate-200 rounded-xl p-3 bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                       class="w-full text-xs font-medium border border-slate-200 rounded-xl p-3 {{ $type === 'telat' ? 'bg-slate-100 text-slate-500 cursor-not-allowed' : 'bg-white text-slate-700' }} focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                       {{ $type === 'telat' ? 'readonly tabindex="-1"' : '' }} required>
             </div>
 
             <!-- Dropdown Pilihan Alasan -->
